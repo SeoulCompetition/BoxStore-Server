@@ -1,11 +1,27 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var UserSchema = new Schema({
-  username : {
-    type : String,
-    trim : true,
-    required : true
-  }
+	user_id :{
+		unique : true,
+		type : String,
+		trim : true,
+		require : true,
+	},
+	password : {
+		type : String,
+		trim : true,
+		require : true  
+  	},
+	user_name : {
+		type : String,
+		trim : true,
+		require : true  
+  	},
+	phone_number : {
+		type : String,
+		trim : true
+	}
+	
 });
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
