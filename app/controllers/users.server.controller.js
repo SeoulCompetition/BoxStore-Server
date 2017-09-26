@@ -72,20 +72,23 @@ exports.login = function(req,res){
 	User.findOne({
 		user_id : id,
 		password : pw
-	},function(err, user){
+	},function(err, result){
 		if(err){
-			// console.log(err);
 			res.json({
 				"RESULT" : "ERR",
 				"ERR_CODE" : "DB_ERR",
 				"message" : "db 에러"
 			});
 		}else{
-			console.log(user);
-			if(user !== null){
+			if(result){
 				res.json({
 					"RESULT" : "SUCCESS",
 					"message" : "로그인 성공"
+				});
+			}else{
+				res.json({
+					"RESULT" : "FAIL",
+					"message" : "ID 혹은 PW를 확인하세요"
 				});
 			}
 		}
