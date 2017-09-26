@@ -4,9 +4,18 @@ exports.create = function(req,res,next){
  var user = new User(req.body);
   user.save(function(err){
     if(err){
+		if(err.code == "11000")
+			res.json({
+				"CODE" : "ERR",
+				"ERR_CODE" : "DUP",
+				"message" : "id 중복"
+			});
       return next(err);
     }else{
-      res.json(user);
+      res.json({
+		  "CODE" : "SUCCESS",
+		  "message" : "회원가입 성공"
+		});
     }
   });
 };
