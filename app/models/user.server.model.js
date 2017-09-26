@@ -24,9 +24,5 @@ var UserSchema = new Schema({
 	
 });
 
-UserSchema.virtual('idpass').get(function(){
-  return this.user_id + ' ' + this.password;
-});
-
-UserSchema.set('toJSON',{ getters : true , virtuals : true});
+//UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
 mongoose.model('User', UserSchema);
