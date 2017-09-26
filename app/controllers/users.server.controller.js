@@ -18,7 +18,7 @@ exports.list = function(req,res,next){
     }else{
       res.json(users);
     }
-  })
+  });
 };
 
 exports.read = function(req,res){
