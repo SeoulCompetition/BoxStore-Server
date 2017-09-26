@@ -11,7 +11,7 @@ module.exports = function(app){
   .delete(users.delete);
 	
   app.route('/users/login')
-  .post(user.login);
+  .post(users.login);
 	// 로그인
 	
   app.param('userId', users.userByID);  //app.route보다 먼저 실행됨

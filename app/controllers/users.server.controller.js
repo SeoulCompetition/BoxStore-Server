@@ -5,14 +5,14 @@ exports.create = function(req,res,next){
     if(err){
 		if(err.code == "11000") // mongodb duplicate code
 			res.json({
-				"CODE" : "ERR",
+				"RESULT" : "ERR",
 				"ERR_CODE" : "DUP",
 				"message" : "id 중복"
 			});
       return next(err);
     }else{
       res.json({
-		  "CODE" : "SUCCESS",
+		  "RESULT" : "SUCCESS",
 		  "message" : "회원가입 성공"
 		});
     }
@@ -74,10 +74,20 @@ exports.login = function(req,res){
 		password : pw
 	},function(err, user){
 		if(err){
-			console.log(err);
+			// console.log(err);
+			res.json({
+				"RESULT" : "ERR",
+				"ERR_CODE" : "DB_ERR",
+				"message" : "db 에러"
+			});
 		}else{
 			console.log(user);
+			if(user !== null){
+				res.json({
+					"RESULT" : "SUCCESS",
+					"message" : "로그인 성공"
+				});
+			}
 		}
-		res.send();
 	});
 };
