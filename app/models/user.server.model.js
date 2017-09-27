@@ -20,8 +20,11 @@ var UserSchema = new Schema({
 	phone_number : {
 		type : String,
 		trim : true
-	}
-	
+	},
+	join_date : {
+		type : Date,
+		default : Date.now
+	}	
 });
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
