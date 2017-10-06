@@ -22,5 +22,6 @@ module.exports = function(){
   app.use(methodOverride());
 
   require('../app/routes/users.server.routes.js')(app);
+  require('../app/routes/categories.server.routes.js')(app);
   return app;
 }
