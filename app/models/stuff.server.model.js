@@ -1,31 +1,40 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
-var UserSchema = new Schema({
-    user_id: {
+var StuffSchema = new Schema({
+    stuff_id: {
         unique: true,
         type: String,
         trim: true,
         require: true,
-    }, //email or token
-    password: {
+    },
+    seller_id: {
         type: String,
         trim: true,
         require: true
     },
-    user_name: {
-        type: String,
-        trim: true,
+    price: {
+        type: Number,
         require: true
     },
-    phone_number: {
+    transaction_status: {
         type: String,
-        trim: true
+        default: "Sell"
     },
-    join_date: {
+    created_date: {
         type: Date,
         default: Date.now
+    },
+    station_info: {
+        type: String
+    },
+    raw_img_urls: {
+        type: Array
+    },
+    resized_img_urls: {
+        type: Array
     }
+    // location 형식에 맞게 추가
 });
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
-mongoose.model('User', UserSchema);
+mongoose.model('Stuff', StuffSchema);
