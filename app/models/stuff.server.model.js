@@ -23,8 +23,11 @@ var StuffSchema = new Schema({
 	created_date : {
 		type : Date,
 		default : Date.now
-	}
-	// location 형식에 맞게 추가	
+	},
+  station_info : {
+    type : String
+  }
+	// location 형식에 맞게 추가
 });
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
