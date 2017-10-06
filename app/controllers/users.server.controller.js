@@ -35,40 +35,11 @@ exports.list = function(req, res, next) {
     });
 };
 
-exports.check = function(req, res) {
-    var id = req.params.user_id;
-    console.log(id);
-    User.findOne({
-        user_id: id
-    }, function(err, result) {
-        if (err) {
-            res.json({
-                "RESULT": "ERR",
-                "ERR_CODE": "DB_ERR",
-                "message": "db 에러"
-            });
-        } else {
-            if (result) {
-                res.json({
-                    "RESULT": "DUP_ID",
-                    "message": "중복된 아이디"
-                });
-            } else {
-                res.json({
-                    "RESULT": "VAILD_ID",
-                    "message": "사용 가능한 아이디"
-                });
-            }
-        }
-    });
-};
 
 exports.login = function(req, res) {
-    var id = req.body.user_id;
-    var pw = req.body.password;
+    var id = req.params.uid;
     User.findOne({
-        user_id: id,
-        password: pw
+        uid: id,
     }, function(err, result) {
         if (err) {
             res.json({
@@ -80,7 +51,8 @@ exports.login = function(req, res) {
             if (result) {
                 res.json({
                     "RESULT": "SUCCESS",
-                    "message": "로그인 성공"
+                    "message": "로그인 성공",
+                    "user_info" : result
                 });
             } else {
                 res.json({

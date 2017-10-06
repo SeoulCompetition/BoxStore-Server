@@ -1,21 +1,19 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var UserSchema = new Schema({
-    user_id: {
+    uid: {
+        type: String,
         unique: true,
+        require: true
+    },
+    user_id: {
         type: String,
         trim: true,
         require: true,
-    }, //email or token
-    password: {
-        type: String,
-        trim: true,
-        require: true
     },
     user_name: {
         type: String,
         trim: true,
-        require: true
     },
     phone_number: {
         type: String,
@@ -24,6 +22,15 @@ var UserSchema = new Schema({
     join_date: {
         type: Date,
         default: Date.now
+    },
+    email: {
+        type: String
+    },
+    user_token: {
+        type: String
+    },
+    photo_url: {
+        type: String
     }
 });
 
