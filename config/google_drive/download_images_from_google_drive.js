@@ -111,12 +111,17 @@ function downloadFile(auth) {
   var service = google.drive('v3');
   service.files.list({
     auth: auth,
+    pageSize: 100,
     q:"mimeType contains 'image' and trashed = false"+name1
   }, function(err, response){
     if(err){
       console.log('The API returned an '+err);
       return;
     }else{
+      if(response.files.length == 0){
+        console.log('No files found.');
+        return;
+      }
       response.files.forEach(function(item){
         var file=fs.createWriteStream(IMAGE_DIR + item.name);
         service.files.get({
