@@ -4,13 +4,13 @@ exports.create = function(req, res, next) {
     user.save(function(err) {
         if (err) {
             if (err.code == "11000") { // mongodb duplicate code
-                res.json({
+                res.status(500).json({
                     "RESULT": "ERR",
                     "ERR_CODE": "DUP",
                     "message": "id 중복"
                 });
             } else {
-                res.json({
+                res.status(500).json({
                     "RESULT": "ERR",
                     "ERR_CODE": "DB_ERR",
                     "message": "db 에러"
@@ -25,16 +25,6 @@ exports.create = function(req, res, next) {
     });
 };
 
-exports.list = function(req, res, next) {
-    User.find(function(err, users) {
-        if (err) {
-            return next(err);
-        } else {
-            res.json(users);
-        }
-    });
-};
-
 
 exports.login = function(req, res) {
     var id = req.params.uid;
@@ -42,7 +32,7 @@ exports.login = function(req, res) {
         uid: id,
     }, function(err, result) {
         if (err) {
-            res.json({
+            res.status(500).json({
                 "RESULT": "ERR",
                 "ERR_CODE": "DB_ERR",
                 "message": "db 에러"
@@ -55,10 +45,7 @@ exports.login = function(req, res) {
                     "user_info" : result
                 });
             } else {
-                res.json({
-                    "RESULT": "FAIL",
-                    "message": "ID 혹은 PW를 확인하세요"
-                });
+                res.status(404).send("Login Fail");
             }
         }
     });
