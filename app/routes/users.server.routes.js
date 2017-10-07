@@ -14,8 +14,5 @@ module.exports = function(app){
   .post(users.login);
 	// 로그인
 
-  app.route('/google_drive_authorized')
-  .get(users.list);
-
   app.param('userId', users.userByID);  //app.route보다 먼저 실행됨
 };

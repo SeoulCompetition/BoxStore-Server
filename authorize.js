@@ -6,23 +6,28 @@ var googleAuth = require('google-auth-library');
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/drive-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/drive'];
-var TOKEN_DIR =  '../../.credentials/';
+var TOKEN_DIR =  './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
-var IMAGE_DIR = './tmp/'
-//var folderId = '0B-0RsXgq2zIsQjBCQVJnSWd6M1U' //folder-india
-//var folderId = '0B-0RsXgq2zIsc05jWjZwekdFLWM' //folder-mongol
+
 
 // Load client secrets from a local file.
-fs.readFile('../../client_secret.json', function processClientSecrets(err, content) {
+fs.readFile('./client_secret.json', function processClientSecrets(err, content) {
   if (err) {
     console.log('Error loading client secret file: ' + err);
     return;
   }
   // Authorize a client with the loaded credentials, then call the
   // Drive API.
-  authorize(JSON.parse(content), downloadFile);
+  authorize(JSON.parse(content), cb);
 });
 
+function cb(token){
+  if(token){
+    console.log('===success to create credentials===');
+  }else{
+    console.log('===fail to create credentials===');
+  }
+}
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -42,8 +47,20 @@ function authorize(credentials, callback) {
     if (err) {
       getNewToken(oauth2Client, callback);
     } else {
-      oauth2Client.credentials = JSON.parse(token);
-      callback(oauth2Client);
+      fs.unlink(TOKEN_PATH, function(err){
+        if(err){
+          console.log(err);
+        }else{
+          fs.rmdir(TOKEN_DIR,function(err){
+            if(err){
+              console.log(err);
+            }else{
+              console.log('===remove credentials===');
+              getNewToken(oauth2Client, callback);
+            }
+          });
+        }
+      });
     }
   });
 }
@@ -98,45 +115,6 @@ function storeToken(token) {
       console.log('Write auth: ' + err);
     }else{
       console.log('Token stored to ' + TOKEN_PATH);
-    }
-  });
-};
-
-/**
- * Lists the names and IDs of up to 10 files.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function downloadFile(auth) {
-  var name1 = ' and name contains "'+'mongol'+'"';
-  var service = google.drive('v3');
-  service.files.list({
-    auth: auth,
-    pageSize: 100,
-    q:"mimeType contains 'image' and trashed = false"+name1
-  }, function(err, response){
-    if(err){
-      console.log('The API returned an '+err);
-      return;
-    }else{
-      if(response.files.length == 0){
-        console.log('No files found.');
-        return;
-      }
-      response.files.forEach(function(item){
-        var file=fs.createWriteStream(IMAGE_DIR + item.name);
-        service.files.get({
-          auth: auth,
-          fileId: item.id,
-          alt: "media"
-        })
-        .on('end', function(){
-          console.log('downloaded', item.name);
-        })
-        .on('error', function(err){
-          console.log('Error during download: '+err);
-        })
-        .pipe(file);
-      });
     }
   });
 };
