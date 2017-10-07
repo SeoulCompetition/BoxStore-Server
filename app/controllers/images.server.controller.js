@@ -1,13 +1,14 @@
 var fs = require('fs'),
     readline = require('readline'),
     google = require('googleapis'),
-    googleAuth = require('google-auth-library')
-    ;
+    googleAuth = require('google-auth-library'),
+    sharp = require('sharp');
 
 var SCOPES = ['https://www.googleapis.com/auth/drive'];
 var TOKEN_DIR =  './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
-var IMAGE_DIR = './tmp/'
+var IMAGE_DIR = './tmp/';
+var WIDE_SIZE = 300;
 var name1 = ' and name contains "';
 
 exports.list = async function(req,res){
@@ -30,17 +31,30 @@ exports.getImage = function(req,res){
       return;
     }
     var token = authorize(JSON.parse(content));
-    var file = downloadFile(await token);
-    file = await file;
-    fs.exists(file.path, function (exists) {
+    var itemName = downloadFile(await token);
+    itemName = await itemName;
+    fs.exists(IMAGE_DIR + '_' +itemName, function (exists) {
         if (exists) {
-            fs.readFile(file.path, function (err,data){
+            fs.readFile(IMAGE_DIR + '_' +itemName, function (err,img){
               if(err){
                 console.log('readFile Error: ' + err);
               }else{
-                res.end(data);
-                fs.unlink(file.path, function(err){
-                  if(err) console.log('file delete fail');
+                res.end(img, function(err){
+                  if(err) console.log('response error: ' + err);
+                  else{
+                    // fs.unlink(IMAGE_DIR + itemName, function(err){
+                    //   if(err){
+                    //     console.log('image delete fail: ' + err);
+                    //   }else{
+                    //     fs.unlink(IMAGE_DIR + '_' + itemName, function(err){
+                    //       if(err) console.log('_image delete fail: ' + err);
+                    //       else{
+                    //         console.log('deleted temporary image all');
+                    //       }
+                    //     });
+                    //   }
+                    // });
+                  }
                 });
               }
             });
@@ -152,7 +166,6 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 function downloadFile(auth) {
-  console.log('name1: ' + name1);
   return new Promise((resolve, reject) => {
     var service = google.drive('v3');
     service.files.list({
@@ -164,7 +177,7 @@ function downloadFile(auth) {
         console.log('The API returned an '+err);
       }else{
         if(response.files.length == 0){
-          reject('No files found.');
+          console.log('No files found.');
         }
         response.files.forEach(function(item){
           var file=fs.createWriteStream(IMAGE_DIR + item.name);
@@ -175,7 +188,17 @@ function downloadFile(auth) {
           })
           .on('end', function(){
             console.log('downloaded', item.name);
-            resolve(file);
+            var re_file=fs.createWriteStream(IMAGE_DIR + '_' + item.name);
+            sharp(IMAGE_DIR + item.name)
+              .resize(WIDE_SIZE)
+              .toFile(IMAGE_DIR + '_' + item.name, function(err){
+                if(err){
+                  console.log('resize error: '+err);
+                }else{
+                  console.log('resized', '_'+item.name);
+                  resolve(item.name);
+                }
+              });
           })
           .on('error', function(err){
             console.log('Error during download: ' + err);

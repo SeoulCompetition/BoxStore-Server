@@ -11,7 +11,8 @@
     "googleapis": "^22.2.0",
     "method-override": "^2.3.9",
     "mongoose": "^4.11.13",
-    "morgan": "^1.8.2"
+    "morgan": "^1.8.2",
+    "sharp": "^0.18.4"
   },
   "devDependencies": {
     "color": "latest"
