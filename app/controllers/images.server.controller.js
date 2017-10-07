@@ -42,18 +42,16 @@ exports.getImage = function(req,res){
                 res.end(img, function(err){
                   if(err) console.log('response error: ' + err);
                   else{
-                    // fs.unlink(IMAGE_DIR + itemName, function(err){
-                    //   if(err){
-                    //     console.log('image delete fail: ' + err);
-                    //   }else{
-                    //     fs.unlink(IMAGE_DIR + '_' + itemName, function(err){
-                    //       if(err) console.log('_image delete fail: ' + err);
-                    //       else{
-                    //         console.log('deleted temporary image all');
-                    //       }
-                    //     });
-                    //   }
-                    // });
+                    sharp.cache(false);
+                    fs.unlink(IMAGE_DIR + itemName, function(err){
+                      if(err) console.log('image delete fail: ' + err);
+                    });
+                    fs.unlink(IMAGE_DIR + '_' + itemName, function(err){
+                      if(err) console.log('_image delete fail: ' + err);
+                      else{
+                        console.log('deleted temporary image all');
+                      }
+                    });
                   }
                 });
               }
@@ -198,7 +196,7 @@ function downloadFile(auth) {
                   console.log('resized', '_'+item.name);
                   resolve(item.name);
                 }
-              });
+              })
           })
           .on('error', function(err){
             console.log('Error during download: ' + err);
