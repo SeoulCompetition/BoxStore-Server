@@ -16,9 +16,12 @@ module.exports = function(){
   }
 
   app.use(bodyParser.urlencoded({
-    extended : true
+    extended : true,
+    limit: '50mb'
   }));
-  app.use(bodyParser.json());
+  app.use(bodyParser.json({
+    limit: '50mb'
+  }));
   app.use(methodOverride());
 
   require('../app/routes/users.server.routes.js')(app);

@@ -9,73 +9,75 @@ var TOKEN_DIR =  './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 var IMAGE_DIR = './tmp/';
 var WIDE_SIZE = 300;
-var name1 = ' and name contains "';
+var name1;
 
 exports.list = async function(req,res){
+  var isAuth = false;
   fs.readFile('./client_secret.json', async function(err, content){
     if(err){
       console.log('readFile Error: ' + err);
       return;
     }
-    var token = authorize(JSON.parse(content));
-    var files = getList(await token);
-    res.json(await files);
+    isAuth = authorize(JSON.parse(content));
+    if(await isAuth){
+      var files = getList();
+      res.json(await files);
+    }else{
+      console.log('isAuth error');
+    }
   });
 };
 
 exports.getImage = function(req,res){
-  name1 = name1 +req.params.imageName+'"';
+  var isAuth = false;
+  name1 = ' and name contains "' +req.params.imageName+'"';
   fs.readFile('./client_secret.json', async function(err, content){
     if(err){
       console.log('readFile Error: ' + err);
       return;
     }
-    var token = authorize(JSON.parse(content));
-    var itemName = downloadFile(await token);
-    itemName = await itemName;
-    fs.exists(IMAGE_DIR + '_' +itemName, function (exists) {
-        if (exists) {
-            fs.readFile(IMAGE_DIR + '_' +itemName, function (err,img){
-              if(err){
-                console.log('readFile Error: ' + err);
-              }else{
-                res.end(img, function(err){
-                  if(err) console.log('response error: ' + err);
-                  else{
-                    sharp.cache(false);
-                    fs.unlink(IMAGE_DIR + itemName, function(err){
-                      if(err) console.log('image delete fail: ' + err);
-                    });
-                    fs.unlink(IMAGE_DIR + '_' + itemName, function(err){
-                      if(err) console.log('_image delete fail: ' + err);
-                      else{
-                        console.log('deleted temporary image all');
-                      }
-                    });
-                  }
-                });
-              }
-            });
-        } else {
-            res.end('file is not exists');
+    isAuth = authorize(JSON.parse(content));
+    if(await isAuth){
+      var itemName = downloadFile();
+      itemName = await itemName;
+      fs.readFile(IMAGE_DIR + itemName, function (err,img){
+        if(err){
+          console.log('readFile Error: ' + err);
+        }else{
+          res.end(img);
+          fs.unlink(IMAGE_DIR + itemName, function(err){
+            if(err) console.log('image delete fail: ' + err);
+          });
         }
-    });
+      });
+    }else{
+      console.log('isAuth error');
+    }
   });
 }
 
-//작업중
+
 exports.upload = async function(req,res){
+  var isAuth = false;
   fs.readFile('./client_secret.json', async function(err, content){
     if(err){
       console.log('readFile Error: ' + err);
     }else{
-      var token = authorize(JSON.parse(content));
-      var files = getList(await token);
-      res.json(await files);
+      isAuth = authorize(JSON.parse(content));
+      if(await isAuth){
+        var msg = uploadFile(req.body);
+        res.json(await msg);
+      }else{
+        console.log('isAuth error');
+      }
     }
   });
 };
 
+
+exports.renderAuthorized = function(req,res){
+  res.end('authorize page');
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -83,22 +85,28 @@ exports.upload = async function(req,res){
  *
  * @param {Object} credentials The authorization client credentials.
  */
-function authorize(credentials) {
+async function authorize(credentials) {
   return new Promise((resolve, reject) => {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
     var auth = new googleAuth();
     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
+    var result_token;
 
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function(err, token) {
+    fs.readFile(TOKEN_PATH, async function(err, token) {
       if (err) {
-        reject(getNewToken(oauth2Client));
+        result_token = getNewToken(oauth2Client);
       } else {
         oauth2Client.credentials = JSON.parse(token);
-        resolve(oauth2Client);
+        result_token = oauth2Client;
       }
+      result_token = await result_token;
+      google.options({
+        auth: result_token
+      });
+      resolve(true);
     });
   });
 };
@@ -159,44 +167,27 @@ function storeToken(token) {
   });
 };
 
-/**
- * Lists the names and IDs of up to 10 files.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
- */
-function downloadFile(auth) {
+function downloadFile() {
   return new Promise((resolve, reject) => {
-    var service = google.drive('v3');
-    service.files.list({
-      auth: auth,
+    var drive = google.drive('v3');
+    drive.files.list({
       pageSize: 1,
       q:"mimeType contains 'image' and trashed = false"+name1
     }, function(err, response){
       if(err){
-        console.log('The API returned an '+err);
+        console.log('google drive list error: '+err);
       }else{
         if(response.files.length == 0){
           console.log('No files found.');
         }
         response.files.forEach(function(item){
           var file=fs.createWriteStream(IMAGE_DIR + item.name);
-          service.files.get({
-            auth: auth,
+          drive.files.get({
             fileId: item.id,
             alt: "media"
           })
           .on('end', function(){
             console.log('downloaded', item.name);
-            var re_file=fs.createWriteStream(IMAGE_DIR + '_' + item.name);
-            sharp(IMAGE_DIR + item.name)
-              .resize(WIDE_SIZE)
-              .toFile(IMAGE_DIR + '_' + item.name, function(err){
-                if(err){
-                  console.log('resize error: '+err);
-                }else{
-                  console.log('resized', '_'+item.name);
-                  resolve(item.name);
-                }
-              })
           })
           .on('error', function(err){
             console.log('Error during download: ' + err);
@@ -211,19 +202,16 @@ function downloadFile(auth) {
 
 /**
  * Lists the names and IDs of up to 10 files.
- * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
-function getList(auth){
+function getList(){
   return new Promise((resolve, reject) => {
-    var service = google.drive('v3');
-    service.files.list({
-      auth: auth,
+    var drive = google.drive('v3');
+    drive.files.list({
       pageSize: 100,
-      q:"mimeType contains 'image' and trashed = false",
-      fields: "nextPageToken, files(id, name)"
+      q:"mimeType contains 'image' and trashed = false"
     }, function(err, response){
       if(err){
-        console.log('The API returned an '+err);
+        console.log('google drive list error: '+err);
       }else{
         if(response.files.length == 0){
           console.log('No files found.');
@@ -235,3 +223,38 @@ function getList(auth){
     });
   });
 };
+
+
+/**
+ *
+ * @param {Object} data
+ * data-> {"body":{??}, "name":"???"}
+ *
+ */
+function uploadFile(data){
+  console.log(data);
+  return new Promise((resolve, reject) => {
+    var drive = google.drive('v3');
+    drive.files.create({
+      resource: {
+        name: data.name + '.jpg',
+        mimeType: 'image/jpeg'
+      },
+      media: {
+        mimeType: 'image/jpeg',
+        body: data.img
+      }
+    }, function(err){
+      if(err){
+        console.log('fail to upload image: ' + err);
+        reject('fail to upload image: ' + err);
+      }else{
+        console.log('success to upload raw image');
+        resolve('success to upload raw image');
+        // sharp(IMAGE_DIR + item.name)
+        //   .resize(WIDE_SIZE);
+
+      }
+    });
+  });
+}
