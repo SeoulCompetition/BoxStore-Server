@@ -46,7 +46,8 @@ exports.getImage = function(req,res){
         }else{
           res.end(img);
           fs.unlink(IMAGE_DIR + itemName, function(err){
-            if(err) console.log('image delete fail: ' + err);
+            if(err) console.log('temporary image delete fail: ' + err);
+            else console.log('temporary image delete success');
           });
         }
       });
@@ -188,6 +189,7 @@ function downloadFile() {
           })
           .on('end', function(){
             console.log('downloaded', item.name);
+            resolve(item.name);
           })
           .on('error', function(err){
             console.log('Error during download: ' + err);
