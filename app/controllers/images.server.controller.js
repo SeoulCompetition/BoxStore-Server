@@ -232,7 +232,6 @@ function getList(){
  *
  */
 function uploadFile(data){
-  console.log(data);
   return new Promise((resolve, reject) => {
     var drive = google.drive('v3');
     drive.files.create({
@@ -245,15 +244,33 @@ function uploadFile(data){
         body: data.img
       }
     }, function(err){
-      if(err){
-        console.log('fail to upload image: ' + err);
-        reject('fail to upload image: ' + err);
-      }else{
+      if(err) console.log('fail to upload raw image: ' + err);
+      else{
         console.log('success to upload raw image');
-        resolve('success to upload raw image');
-        // sharp(IMAGE_DIR + item.name)
-        //   .resize(WIDE_SIZE);
-
+        sharp(new Buffer.from(data.img.data))
+          .resize(WIDE_SIZE)
+          .toBuffer(function(err, outBuffer){
+            if(err) console.log('toBuffer error: ' + err);
+            else{
+              drive.files.create({
+                resource: {
+                  name: '_' + data.name + '.jpg',
+                  mimeType: 'image/jpeg'
+                },
+                media: {
+                  mimeType: 'image/jpeg',
+                  body: outBuffer
+                }
+              }, function(err){
+                  if(err) console.log('fail to upload resized image: ' + err);
+                  else{
+                    sharp.cache(false);
+                    console.log('success to upload resized image');
+                    resolve('success to upload resized image');
+                  }
+              });
+            }
+          });
       }
     });
   });
