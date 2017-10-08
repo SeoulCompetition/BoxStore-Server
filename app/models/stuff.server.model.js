@@ -1,12 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var StuffSchema = new Schema({
-    stuff_id: {
-        unique: true,
-        type: String,
-        trim: true,
-        require: true,
-    },
     seller_id: {
         type: String,
         trim: true,
@@ -32,6 +26,9 @@ var StuffSchema = new Schema({
     },
     resized_img_urls: {
         type: Array
+    },
+    category : {
+        type : String
     }
     // location 형식에 맞게 추가
 });
