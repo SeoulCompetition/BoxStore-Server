@@ -1,15 +1,12 @@
 var fs = require('fs'),
     readline = require('readline'),
     google = require('googleapis'),
-    googleAuth = require('google-auth-library'),
-    sharp = require('sharp');
+    googleAuth = require('google-auth-library');
 
 var SCOPES = ['https://www.googleapis.com/auth/drive'];
 var TOKEN_DIR =  './.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'drive-nodejs-quickstart.json';
 var IMAGE_DIR = './tmp/';
-var WIDE_SIZE = 300;
-var name1;
 
 exports.list = async function(req,res){
   var isAuth = false;
@@ -28,36 +25,9 @@ exports.list = async function(req,res){
   });
 };
 
-exports.getImage = function(req,res){
-  var isAuth = false;
-  name1 = ' and name contains "' +req.params.imageName+'"';
-  fs.readFile('./client_secret.json', async function(err, content){
-    if(err){
-      console.log('readFile Error: ' + err);
-      return;
-    }
-    isAuth = authorize(JSON.parse(content));
-    if(await isAuth){
-      var itemName = downloadFile();
-      itemName = await itemName;
-      fs.readFile(IMAGE_DIR + itemName, function (err,img){
-        if(err){
-          console.log('readFile Error: ' + err);
-        }else{
-          res.end(img);
-          fs.unlink(IMAGE_DIR + itemName, function(err){
-            if(err) console.log('temporary image delete fail: ' + err);
-            else console.log('temporary image delete success');
-          });
-        }
-      });
-    }else{
-      console.log('isAuth error');
-    }
-  });
-}
-
-
+/**
+ * upload file and return json about id, name, webContentLink, thumbnailLink
+**/
 exports.upload = async function(req,res){
   var isAuth = false;
   fs.readFile('./client_secret.json', async function(err, content){
@@ -66,8 +36,13 @@ exports.upload = async function(req,res){
     }else{
       isAuth = authorize(JSON.parse(content));
       if(await isAuth){
-        var msg = uploadFile(req.body);
-        res.json(await msg);
+        var fileId = uploadFile(req.body);
+        fileId = await fileId;
+        anyoneWithLink(fileId);
+        var imageLink = getLinks(fileId);
+        imageLink = await imageLink;
+        console.log('imageLink: ' + JSON.stringify(imageLink));
+        return imageLink;
       }else{
         console.log('isAuth error');
       }
@@ -168,39 +143,6 @@ function storeToken(token) {
   });
 };
 
-function downloadFile() {
-  return new Promise((resolve, reject) => {
-    var drive = google.drive('v3');
-    drive.files.list({
-      pageSize: 1,
-      q:"mimeType contains 'image' and trashed = false"+name1
-    }, function(err, response){
-      if(err){
-        console.log('google drive list error: '+err);
-      }else{
-        if(response.files.length == 0){
-          console.log('No files found.');
-        }
-        response.files.forEach(function(item){
-          var file=fs.createWriteStream(IMAGE_DIR + item.name);
-          drive.files.get({
-            fileId: item.id,
-            alt: "media"
-          })
-          .on('end', function(){
-            console.log('downloaded', item.name);
-            resolve(item.name);
-          })
-          .on('error', function(err){
-            console.log('Error during download: ' + err);
-            reject(err);
-          })
-          .pipe(file);
-        });
-      }
-    });
-  });
-};
 
 /**
  * Lists the names and IDs of up to 10 files.
@@ -211,6 +153,7 @@ function getList(){
     drive.files.list({
       pageSize: 100,
       q:"mimeType contains 'image' and trashed = false"
+
     }, function(err, response){
       if(err){
         console.log('google drive list error: '+err);
@@ -239,40 +182,48 @@ function uploadFile(data){
     drive.files.create({
       resource: {
         name: data.name + '.jpg',
-        mimeType: 'image/jpeg'
+        mimeType: 'image/jpeg',
       },
       media: {
         mimeType: 'image/jpeg',
         body: data.img
       }
-    }, function(err){
-      if(err) console.log('fail to upload raw image: ' + err);
+    }, function(err, file){
+      if(err) console.log('fail to upload image: ' + err);
       else{
-        console.log('success to upload raw image');
-        sharp(new Buffer.from(data.img.data))
-          .resize(WIDE_SIZE)
-          .toBuffer(function(err, outBuffer){
-            if(err) console.log('toBuffer error: ' + err);
-            else{
-              drive.files.create({
-                resource: {
-                  name: '_' + data.name + '.jpg',
-                  mimeType: 'image/jpeg'
-                },
-                media: {
-                  mimeType: 'image/jpeg',
-                  body: outBuffer
-                }
-              }, function(err){
-                  if(err) console.log('fail to upload resized image: ' + err);
-                  else{
-                    sharp.cache(false);
-                    console.log('success to upload resized image');
-                    resolve('success to upload resized image');
-                  }
-              });
-            }
-          });
+        console.log('success to upload image');
+        resolve(file.id);
+      }
+    });
+  });
+}
+
+function anyoneWithLink(id){
+  var drive = google.drive('v3');
+  drive.permissions.create({  //set anyoneWithLink permission
+    resource: {
+      'type': 'anyone',
+      'role': 'reader'},
+    fileId: id
+  }, function (err, res) {
+    if (err) console.log('permission settings: ' + err);
+      else {
+      console.log('success to permision settings');
+    }
+  });
+}
+
+function getLinks(id){
+  return new Promise((resolve, reject) => {
+    var drive = google.drive('v3');
+    drive.files.get({ //get links
+      fileId: id,
+      fields: 'id, name, webContentLink, thumbnailLink'
+    }, function(err, success){
+      if(err) console.log('fail to get link: ' + err);
+      else{
+        success.webContentLink = success.webContentLink.substr(0, success.webContentLink.length-16);
+        resolve(success);
       }
     });
   });

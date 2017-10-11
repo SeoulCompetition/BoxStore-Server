@@ -5,9 +5,6 @@ module.exports = function(app){
   .get(images.list)
   .post(images.upload);
 
-  app.route('/images/:imageName')
-  .get(images.getImage);
-
   app.route('/google_drive_authorized')
   .get(images.renderAuthorized);
 };
