@@ -6,16 +6,11 @@ var UserSchema = new Schema({
         unique: true,
         require: true
     },
-    user_id: {
-        type: String,
-        trim: true,
-        require: true,
-    },
-    user_name: {
+    name: {
         type: String,
         trim: true,
     },
-    phone_number: {
+    phoneNum: {
         type: String,
         trim: true
     },
@@ -26,10 +21,10 @@ var UserSchema = new Schema({
     email: {
         type: String
     },
-    user_token: {
+    userToken: {
         type: String
     },
-    photo_url: {
+    photoURL: {
         type: String
     }
 });
