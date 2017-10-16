@@ -6,13 +6,11 @@ exports.create = function(req, res, next) {
             if (err.code == "11000") { // mongodb duplicate code
                 res.status(500).json({
                     "RESULT": "ERR",
-                    "ERR_CODE": "DUP",
                     "message": "id 중복"
                 });
             } else {
                 res.status(500).json({
                     "RESULT": "ERR",
-                    "ERR_CODE": "DB_ERR",
                     "message": "db 에러"
                 });
             }
@@ -34,7 +32,6 @@ exports.login = function(req, res) {
         if (err) {
             res.status(500).json({
                 "RESULT": "ERR",
-                "ERR_CODE": "DB_ERR",
                 "message": "db 에러"
             });
         } else {
