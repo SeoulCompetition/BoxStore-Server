@@ -10,7 +10,7 @@ exports.list = function(req, res, next) {
 		"name": true,
 		"parent": true,
 		"description" : true
-	).lean().exec(function (err,result) {
+	}).lean().exec(function (err,result) {
           if(result.index == 2 ){
             res.json({
               "RESULT" : "SELECTED",
