@@ -26,7 +26,7 @@ exports.list = function(req, res, next) {
                     });
                 } else {
                     res.json({
-                        "RESULT": "SUCCES",
+                        "RESULT": "SUCCESS",
                         "DATA": result
                     });
                 }
