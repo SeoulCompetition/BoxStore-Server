@@ -9,23 +9,28 @@ var UserSchema = new Schema({
     name: {
         type: String,
         trim: true,
+    	default :""
     },
     phoneNum: {
         type: String,
-        trim: true
+        trim: true,
+	default: ""
     },
     join_date: {
         type: Date,
         default: Date.now
     },
     email: {
-        type: String
+        type: String,
+	default:""
     },
     userToken: {
-        type: String
+        type: String,
+	default:""
     },
     photoURL: {
-        type: String
+        type: String,
+	default :""
     }
 });
 
