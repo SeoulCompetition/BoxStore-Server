@@ -14,20 +14,20 @@ exports.list = function(req, res, next) {
 	filter,function (err,result) {
           if(result.index == 2 ){
             res.json({
-              "RESULT" : "SELECTED",
-              "DATA" : category
+              "result" : "SELECTED",
+              "data" : category
             });
           }else {
             db.collection("categories").find({"parent":category},filter).toArray(function(err, result) {
                 if (err) {
                     res.json({
-                        "RESULT": "ERR",
+                        "result": "ERR",
                         "messgae": "DB 에러"
                     });
                 } else {
                     res.json({
-                        "RESULT": "SUCCESS",
-                        "DATA": result
+                        "result": "SUCCESS",
+                        "data": result
                     });
                 }
             });

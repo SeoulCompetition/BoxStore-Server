@@ -5,18 +5,18 @@ exports.create = function(req, res, next) {
         if (err) {
             if (err.code == "11000") { // mongodb duplicate code
                 res.status(500).json({
-                    "RESULT": "ERR",
+                    "result": "ERR",
                     "message": "id 중복"
                 });
             } else {
                 res.status(500).json({
-                    "RESULT": "ERR",
+                    "result": "ERR",
                     "message": "db 에러"
                 });
             }
         } else {
             res.json({
-                "RESULT": "SUCCESS",
+                "result": "SUCCESS",
                 "message": "회원가입 성공"
             });
         }
@@ -40,19 +40,19 @@ exports.login = function(req, res) {
 	).lean().exec(function(err, result) {
         if (err) {
             res.status(500).json({
-                "RESULT": "ERR",
+                "result": "ERR",
                 "message": "db 에러"
             });
         } else {
             if (result) {
                 res.json({
-                    "RESULT": "SUCCESS",
+                    "result": "SUCCESS",
                     "message": "로그인 성공",
-                    "user_info" : result
+                    "userInfo" : result
                 });
             } else {
                 res.status(404).json({
-			"RESULT": "ERR",
+			"result": "ERR",
 			"message": "로그인 실패"
 		});
             }
