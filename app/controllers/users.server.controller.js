@@ -32,6 +32,7 @@ exports.login = function(req, res) {
 	"_id": false,
 	"uid": true,
 	"name": true,
+	"phoneNumber" : true,
 	"email": true,
 	"userToken": true,
 	"photoURL": true
