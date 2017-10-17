@@ -28,7 +28,15 @@ exports.login = function(req, res) {
     var id = req.params.uid;
     User.findOne({
         uid: id,
-    }, function(err, result) {
+    },{
+	"_id": false,
+	"uid": true,
+	"name": true,
+	"email": true,
+	"userToken": true,
+	"photoURL": true
+	}
+	).lean().exec(function(err, result) {
         if (err) {
             res.status(500).json({
                 "RESULT": "ERR",
@@ -42,7 +50,10 @@ exports.login = function(req, res) {
                     "user_info" : result
                 });
             } else {
-                res.status(404).send("Login Fail");
+                res.status(404).json({
+			"RESULT": "ERR",
+			"message": "로그인 실패"
+		});
             }
         }
     });
