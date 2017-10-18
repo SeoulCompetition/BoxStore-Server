@@ -4,12 +4,13 @@ module.exports = function(app){
 
   app.route('/station')
   .post(stations.create)
-  .get(stations.list);
+  .get(stations.list)
+  .delete(stations.deleteAll);
 
   app.route('/station/:station_id')
   .get(stations.getStation)
-  .post(stations.addStuffCount);
+  .put(stations.addStuffCount);
 
-  app.route('/station/:line')
+  app.route('/station/line/:line_number')
   .get(stations.stationRanking);
 };

@@ -1,11 +1,11 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var stationSchema = new Schema({
-    station_id: { //
+    station_id: { //1호선_서울역
         type: String,
         trim: true,
-        unique: true,
-        default: line+'_'+name
+        require: true,
+        unique: true
     },
     name: { //서울역
         type: String,
