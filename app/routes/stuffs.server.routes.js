@@ -9,4 +9,7 @@ module.exports = function(app) {
 
     app.route('/stuffs/:stuff_id')
         .get(stuffs.info);
+
+    app.route('/stuffs/lately/:station_id/:page')
+        .get(stuffs.latelyInfo);
 };

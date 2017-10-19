@@ -7,10 +7,10 @@ module.exports = function(app){
   .get(stations.list)
   .delete(stations.deleteAll);
 
-  app.route('/station/:station_id')
+  app.route('/station/find/:station_id')
   .get(stations.getStation)
   .put(stations.addStuffCount);
 
-  app.route('/station/line/:line_number')
+  app.route('/station/popular')
   .get(stations.stationRanking);
 };

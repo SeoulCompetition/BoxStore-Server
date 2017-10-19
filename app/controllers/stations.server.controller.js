@@ -109,10 +109,31 @@ exports.addStuffCount = function(req, res){
   });
 };
 
-//get '/station/line/:line_number'
+exports.addCount = function(station_id){
+  Station.findOne({
+    _id : station_id
+  })
+  .exec(function(err, station) {
+      if (err) {
+        return err;
+      } else {
+        station.stuff_count = station.stuff_count + 1;
+        station.save(function(err2){
+          if (err2) {
+            return err2;
+          }else{
+            return true;
+          }
+        })
+      }
+  });
+};
+
+//get '/station/popular'
 exports.stationRanking = function(req, res){
-  Station.find({line : req.params.line_number+"호선"})
+  Station.find()
   .sort({stuff_count : -1})
+  .limit(10)
   .exec(function(err, stations) {
     if(err){
       res.status(500).json({
@@ -121,8 +142,7 @@ exports.stationRanking = function(req, res){
           "message": err
       });
     }else{
-      console.log(stations);
-      res.json(stations[0]);
+      res.json(stations);
     }
   });
 };
