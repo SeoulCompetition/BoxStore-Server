@@ -1,10 +1,10 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+
 var StuffSchema = new Schema({
     seller_id: {
-        type: String,
-        trim: true,
-        require: true
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     },
     price: {
         type: Number,
@@ -19,7 +19,8 @@ var StuffSchema = new Schema({
         default: Date.now
     },
     station_info: {
-        type: String
+        type: Schema.Types.ObjectId,
+        ref: 'Station'
     },
     raw_img_urls: {
         type: Array
@@ -33,5 +34,4 @@ var StuffSchema = new Schema({
     // location 형식에 맞게 추가
 });
 
-//UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
 mongoose.model('Stuff', StuffSchema);

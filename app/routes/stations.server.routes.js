@@ -11,6 +11,6 @@ module.exports = function(app){
   .get(stations.getStation)
   .put(stations.addStuffCount);
 
-  app.route('/station/line/:line_number')
+  app.route('/station/popular')
   .get(stations.stationRanking);
 };
