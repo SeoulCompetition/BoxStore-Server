@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var stationSchema = new Schema({
-    station_id: { //1호선_서울역
+    stationId: { //1호선_서울역
         type: String,
         trim: true,
         require: true,
@@ -15,7 +15,7 @@ var stationSchema = new Schema({
         type: String,
         require: true
     },
-    stuff_count: {
+    stuffCount: {
       type: Number,
       default: 0
     }

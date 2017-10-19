@@ -7,7 +7,7 @@ module.exports = function(app){
   .get(stations.list)
   .delete(stations.deleteAll);
 
-  app.route('/station/find/:station_id')
+  app.route('/station/find/:stationId')
   .get(stations.getStation)
   .put(stations.addStuffCount);
 
