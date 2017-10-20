@@ -79,7 +79,7 @@ exports.info = function(req, res) {
 //get '/stuffs/lately/:station_id/:page'
 exports.latelyInfo = function(req, res){
   console.log(req.params.stationId);
-  Stuff.find({ stationInfo : req.params.stationId})
+  Stuff.find({ stationId : req.params.stationId})
     .sort({createdDate : -1})
     .skip((parseInt(req.params.page)-1)*6)
     .limit(6)
