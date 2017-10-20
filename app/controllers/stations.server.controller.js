@@ -90,7 +90,7 @@ exports.addStuffCount = function(req, res) {
                     "message": err
                 });
             } else {
-                station.stuff_count = station.stuff_count + req.body.stuff_count;
+                station.stuffCount = station.stuffCount + req.body.stuffCount;
                 station.save(function(err2) {
                     if (err2) {
                         res.status(500).json({
@@ -100,7 +100,7 @@ exports.addStuffCount = function(req, res) {
                     } else {
                         res.json({
                             "result": "SUCCESS",
-                            "message": "success to add stuff count(+" + req.body.stuff_count + ")"
+                            "message": "success to add stuff count(+" + req.body.stuffCount + ")"
                         });
                     }
                 })
