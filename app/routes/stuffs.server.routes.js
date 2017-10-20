@@ -7,9 +7,9 @@ module.exports = function(app) {
     app.route('/stuffs/list/:category')
         .get(stuffs.list);
 
-    app.route('/stuffs/:stuff_id')
+    app.route('/stuffs/:stuffId')
         .get(stuffs.info);
 
-    app.route('/stuffs/lately/:station_id/:page')
+    app.route('/stuffs/lately/:stationId/:page')
         .get(stuffs.latelyInfo);
 };

@@ -2,34 +2,37 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var StuffSchema = new Schema({
-    seller_id: {
+    sellerId: {
         type: Schema.Types.ObjectId,
         ref: 'User'
+    },
+    stuffName: {
+        type: String
+    },
+    stuffInfo: {
+        type: String
     },
     price: {
         type: Number,
         require: true
     },
-    transaction_status: {
+    transactionStatus: {
         type: String,
         default: "Sell"
     },
-    created_date: {
+    createdDate: {
         type: Date,
         default: Date.now
     },
-    station_info: {
+    stationId: {
         type: Schema.Types.ObjectId,
         ref: 'Station'
     },
-    raw_img_urls: {
+    imageUrl: {
         type: Array
     },
-    resized_img_urls: {
-        type: Array
-    },
-    category : {
-        type : String
+    category: {
+        type: String
     }
     // location 형식에 맞게 추가
 });
