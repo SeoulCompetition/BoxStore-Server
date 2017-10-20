@@ -17,10 +17,8 @@ exports.create = function(req, res, next) {
               });
             }
             var stuff = new Stuff(req.body);
-            // stuff.price = req.body.price;
-            // stuff.category = req.body.category;
-            // stuff.seller_id = seller._id;
-            // stuff.station_info = station._id;
+            stuff.sellerId = seller._id;
+            stuff.stationId = station._id;
             stuff.save(function(err) {
                 if (err) {
                     res.status(500).json({
