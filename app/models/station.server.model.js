@@ -7,11 +7,11 @@ var stationSchema = new Schema({
         require: true,
         unique: true
     },
-    name: { //서울역
+    stationName: { //서울역
         type: String,
         require: true
     },
-    line: { //1호선
+    stationLine: { //1호선
         type: String,
         require: true
     },
