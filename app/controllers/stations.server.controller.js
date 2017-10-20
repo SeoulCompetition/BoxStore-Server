@@ -4,10 +4,6 @@ var Station = require('mongoose').model('Station');
 exports.create = function(req, res) {
     var station = new Station(req.body);
     station.stationId = req.body.line + '_' + req.body.name;
-    // station.name = req.body.name;
-    // station.line = req.body.line;
-    console.log(station);
-
     station.save(function(err) {
         if (err) {
             res.status(500).json({
@@ -96,10 +92,10 @@ exports.addStuffCount = function(req, res) {
             } else {
                 station.stuff_count = station.stuff_count + req.body.stuff_count;
                 station.save(function(err2) {
-                    if (err) {
+                    if (err2) {
                         res.status(500).json({
                             "result": "ERR",
-                            "message": err
+                            "message": err2
                         });
                     } else {
                         res.json({
