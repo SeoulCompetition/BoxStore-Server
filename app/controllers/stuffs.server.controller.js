@@ -3,9 +3,9 @@ var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 var stations = require('../../app/controllers/stations.server.controller');
 
-//seller_id: User.uid, station_line: Station.line, station_name: Station.name
+//seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {
-  Station.findOne({line: req.body.stationLine, name: req.body.stationName})
+  Station.findOne({stationLine: req.body.stationLine, stationName: req.body.stationName})
     .exec(function(err, station){
       if(err) res.json(err);
       Seller.findOne({uid: req.body.sellerId})
