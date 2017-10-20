@@ -24,7 +24,7 @@ var StuffSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    stationInfo: {
+    stationId: {
         type: Schema.Types.ObjectId,
         ref: 'Station'
     },
