@@ -3,7 +3,7 @@ var Station = require('mongoose').model('Station');
 //post'/station'
 exports.create = function(req, res) {
     var station = new Station(req.body);
-    station.stationId = req.body.line + '_' + req.body.name;
+    station.stationId = req.body.stationLine + '_' + req.body.stationName;
     station.save(function(err) {
         if (err) {
             res.status(500).json({
@@ -63,7 +63,7 @@ exports.getStation = function(req, res) {
     Station.findOne({
             _id: req.params.stationId
         })
-        .exec(function(err, stations) {
+        .exec(function(err, stations) { 
             if (err) {
                 res.status(500).json({
                     "result": "ERR",
