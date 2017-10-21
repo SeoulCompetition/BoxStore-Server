@@ -59,8 +59,13 @@ exports.deleteAll = function(req, res) {
 
 //get '/station/:stationName'
 exports.getStation = function(req, res) {
+    var filter = {
+              _id: 0,
+              stationName: 1
+    };
     Station.find({
             stationName: req.params.stationName
+
         })
         .exec(function(err, stations) {
             if (err) {
@@ -79,24 +84,24 @@ exports.getStation = function(req, res) {
 
 
 exports.addCount = function(stationId) {
-    Station.findOne({
-            _id: stationId
-        })
-        .exec(function(err, station) {
-            if (err) {
-                return err;
-            } else {
-                station.stuffCount = station.stuffCount + 1;
-                station.save(function(err2) {
-                    if (err2) {
-                        return err2;
-                    } else {
-                        return true;
-                    }
-                })
-            }
-        });
-};
+  Station.findOne({
+          _id: stationId
+    })
+    .exec(function(err, station) {
+        if (err) {
+            return err;
+        } else {
+            station.stuffCount = station.stuffCount + 1;
+            station.save(function(err2) {
+                if (err2) {
+                    return err2;
+                } else {
+                    return true;
+                }
+            })
+        }
+    });
+  };
 
 //get '/station/popular'
 exports.stationRanking = function(req, res) {

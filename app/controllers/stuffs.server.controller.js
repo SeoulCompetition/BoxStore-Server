@@ -38,10 +38,13 @@ exports.create = function(req, res, next) {
 };
 
 exports.list = function(req, res) {
-    // console.log(req.params.category);
+    console.log(req.params.category);
     Stuff.find({
       category : req.params.category
-    },function(err, stuffs) {
+    })
+    .populate('sellerId')
+    .populate('stationId')
+    .exec(function(err, stuffs) {
         if (err) {
             res.status(500).json({
                 "result": "ERR",
@@ -60,7 +63,10 @@ exports.info = function(req, res) {
     console.log(req.params.stuffId);
     Stuff.find({
       _id : req.params.stuffId
-    },function(err, stuffs) {
+    })
+    .populate('sellerId')
+    .populate('stationId')
+    .exec(function(err, stuffs) {
         if (err) {
             res.status(500).json({
                 "result": "ERR",
@@ -84,6 +90,8 @@ exports.latelyInfo = function(req, res){
         .sort({createdDate : -1})
         .skip((parseInt(req.params.page)-1)*6)
         .limit(6)
+        .populate('sellerId')
+        .populate('stationId')
         .exec(function(err, stuffs) {
           if(err){
             res.status(500).json({
