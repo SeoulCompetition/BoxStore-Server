@@ -21,6 +21,9 @@ exports.create = function(req, res) {
 //get '/station'
 exports.list = function(req, res) {
     Station.find()
+        .select({
+          _id: 0
+        })
         .sort({
             stationName: 1
         })
