@@ -3,6 +3,14 @@ var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 var stations = require('../../app/controllers/stations.server.controller');
 
+var sellerFilter = {
+  _id: 0
+};
+var stationFilter = {
+  _id: 0,
+  stuffCount: 0
+};
+
 //seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {
   Station.findOne({stationName: req.body.stationName})
@@ -42,8 +50,8 @@ exports.list = function(req, res) {
     Stuff.find({
       category : req.params.category
     })
-    .populate('sellerId')
-    .populate('stationId')
+    .populate('sellerId', sellerFilter)
+    .populate('stationId', stationFilter)
     .exec(function(err, stuffs) {
         if (err) {
             res.status(500).json({
@@ -64,8 +72,8 @@ exports.info = function(req, res) {
     Stuff.find({
       _id : req.params.stuffId
     })
-    .populate('sellerId')
-    .populate('stationId')
+    .populate('sellerId', sellerFilter)
+    .populate('stationId', stationFilter)
     .exec(function(err, stuffs) {
         if (err) {
             res.status(500).json({
@@ -90,8 +98,8 @@ exports.latelyInfo = function(req, res){
         .sort({createdDate : -1})
         .skip((parseInt(req.params.page)-1)*6)
         .limit(6)
-        .populate('sellerId')
-        .populate('stationId')
+        .populate('sellerId', sellerFilter)
+        .populate('stationId', stationFilter)
         .exec(function(err, stuffs) {
           if(err){
             res.status(500).json({

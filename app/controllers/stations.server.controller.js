@@ -59,13 +59,11 @@ exports.deleteAll = function(req, res) {
 
 //get '/station/:stationName'
 exports.getStation = function(req, res) {
-    var filter = {
-              _id: 0,
-              stationName: 1
-    };
     Station.find({
             stationName: req.params.stationName
-
+        })
+        .select({
+          _id: 0
         })
         .exec(function(err, stations) {
             if (err) {
@@ -106,6 +104,7 @@ exports.addCount = function(stationId) {
 //get '/station/popular'
 exports.stationRanking = function(req, res) {
     Station.find()
+        .select({_id: 0})
         .sort({
             stuffCount: -1
         })
