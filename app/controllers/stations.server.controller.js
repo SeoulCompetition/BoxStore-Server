@@ -3,7 +3,6 @@ var Station = require('mongoose').model('Station');
 //post'/station'
 exports.create = function(req, res) {
     var station = new Station(req.body);
-    station.stationId = req.body.stationLine + '_' + req.body.stationName;
     station.save(function(err) {
         if (err) {
             res.status(500).json({
@@ -23,7 +22,7 @@ exports.create = function(req, res) {
 exports.list = function(req, res) {
     Station.find()
         .sort({
-            stationId: 1
+            stationName: 1
         })
         .exec(function(err, stations) {
             if (err) {
@@ -58,12 +57,12 @@ exports.deleteAll = function(req, res) {
     });
 };
 
-//get '/station/:stationId'
+//get '/station/:stationName'
 exports.getStation = function(req, res) {
-    Station.findOne({
-            _id: req.params.stationId
+    Station.find({
+            stationName: req.params.stationName
         })
-        .exec(function(err, stations) { 
+        .exec(function(err, stations) {
             if (err) {
                 res.status(500).json({
                     "result": "ERR",
@@ -78,35 +77,6 @@ exports.getStation = function(req, res) {
         });
 };
 
-//put '/station/:stationId'
-exports.addStuffCount = function(req, res) {
-    Station.findOne({
-            _id: req.params.stationId
-        })
-        .exec(function(err, station) {
-            if (err) {
-                res.status(500).json({
-                    "result": "ERR",
-                    "message": err
-                });
-            } else {
-                station.stuffCount = station.stuffCount + req.body.stuffCount;
-                station.save(function(err2) {
-                    if (err2) {
-                        res.status(500).json({
-                            "result": "ERR",
-                            "message": err2
-                        });
-                    } else {
-                        res.json({
-                            "result": "SUCCESS",
-                            "message": "success to add stuff count(+" + req.body.stuffCount + ")"
-                        });
-                    }
-                })
-            }
-        });
-};
 
 exports.addCount = function(stationId) {
     Station.findOne({

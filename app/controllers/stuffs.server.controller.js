@@ -5,7 +5,7 @@ var stations = require('../../app/controllers/stations.server.controller');
 
 //seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {
-  Station.findOne({stationLine: req.body.stationLine, stationName: req.body.stationName})
+  Station.findOne({stationName: req.body.stationName})
     .exec(function(err, station){
       if(err) res.json(err);
       Seller.findOne({uid: req.body.sellerId})
@@ -76,24 +76,26 @@ exports.info = function(req, res) {
 };
 
 
-//get '/stuffs/lately/:station_id/:page'
+//get '/stuffs/lately/:stationName/:page'
 exports.latelyInfo = function(req, res){
-  console.log(req.params.stationId);
-  Stuff.find({ stationId : req.params.stationId})
-    .sort({createdDate : -1})
-    .skip((parseInt(req.params.page)-1)*6)
-    .limit(6)
-    .exec(function(err, stuffs) {
-      if(err){
-        res.status(500).json({
-            "result": "ERR",
-            "message": err
+  Station.findOne({stationName : req.params.stationName})
+    .exec(function(err, station){
+      Stuff.find({ stationId : station._id})
+        .sort({createdDate : -1})
+        .skip((parseInt(req.params.page)-1)*6)
+        .limit(6)
+        .exec(function(err, stuffs) {
+          if(err){
+            res.status(500).json({
+                "result": "ERR",
+                "message": err
+            });
+          }else{
+            res.json({
+              "result":"SUCCESS",
+              "stuffs":stuffs
+            });
+          }
         });
-      }else{
-        res.json({
-          "result":"SUCCESS",
-          "stuffs":stuffs
-        });
-      }
     });
-}
+};

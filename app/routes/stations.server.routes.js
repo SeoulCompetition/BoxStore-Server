@@ -7,9 +7,8 @@ module.exports = function(app){
   .get(stations.list)
   .delete(stations.deleteAll);
 
-  app.route('/station/find/:stationId')
+  app.route('/station/find/:stationName')
   .get(stations.getStation)
-  .put(stations.addStuffCount);
 
   app.route('/station/popular')
   .get(stations.stationRanking);

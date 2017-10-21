@@ -10,6 +10,6 @@ module.exports = function(app) {
     app.route('/stuffs/:stuffId')
         .get(stuffs.info);
 
-    app.route('/stuffs/lately/:stationId/:page')
+    app.route('/stuffs/lately/:stationName/:page')
         .get(stuffs.latelyInfo);
 };

@@ -35,6 +35,6 @@ var StuffSchema = new Schema({
         type: String
     }
     // location 형식에 맞게 추가
-});
+}, {versionKey: false});
 
 mongoose.model('Stuff', StuffSchema);
