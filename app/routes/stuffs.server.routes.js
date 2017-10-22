@@ -12,4 +12,7 @@ module.exports = function(app) {
 
     app.route('/stuffs/lately/:stationName/:page')
         .get(stuffs.latelyInfo);
+
+    app.route('/stuffs/admin')
+        .post(stuffs.createByAdmin);
 };

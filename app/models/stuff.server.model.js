@@ -33,6 +33,11 @@ var StuffSchema = new Schema({
     },
     category: {
         type: String
+    },
+    used: {
+        type: String,
+        enum : ['NEW','USED','DAMAGED'],
+        default: 'USED'
     }
     // location 형식에 맞게 추가
 }, {versionKey: false});

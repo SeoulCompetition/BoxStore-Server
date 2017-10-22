@@ -3,9 +3,10 @@ var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 var stations = require('../../app/controllers/stations.server.controller');
 
-var sellerFilter = {
+var hide_id = {
   _id: 0
 };
+
 var stationFilter = {
   _id: 0,
   stuffCount: 0
@@ -45,12 +46,50 @@ exports.create = function(req, res, next) {
     });
 };
 
+exports.createByAdmin = function(req, res){
+  var stationNameArr = ['홍대입구','서울역','여의도','강남','건대입구','당산','시청','노원','사당','고속터미널'];
+  var errArr = [];
+  var endNum = 0;
+  var stuffArr = req.body;
+  stuffArr.forEach(function(item){
+    Station.findOne({stationName: item.stationName})
+      .exec(function(err, station){
+        if(err) res.json(err);
+        Seller.findOne({uid: item.sellerId})
+          .exec(function(err, seller){
+              if(err) errArr.push(err);
+              else{
+                var stuff = new Stuff(item);
+                stuff.sellerId = seller._id;
+                stuff.stationId = station._id;
+                stuff.save(function(err) {
+                    if(err) errArr.push(err);
+                    endNum++;
+                    if(endNum == stuffArr.length){
+                      if(errArr.length) res.json(errArr);
+                      else{
+                        for(var i=0;i<stationNameArr.length;i++){
+                            stations.setCount(stationNameArr[i], 10-i);
+                        }
+                        res.json({
+                          "result": "SUCCESS",
+                          "message": endNum+"개 등록성공"
+                        });
+                      }
+                    }
+                });
+              }
+          });
+      });
+  });
+};
+
 exports.list = function(req, res) {
     console.log(req.params.category);
     Stuff.find({
       category : req.params.category
     })
-    .populate('sellerId', sellerFilter)
+    .populate('sellerId', hide_id)
     .populate('stationId', stationFilter)
     .exec(function(err, stuffs) {
         if (err) {
@@ -72,7 +111,8 @@ exports.info = function(req, res) {
     Stuff.find({
       _id : req.params.stuffId
     })
-    .populate('sellerId', sellerFilter)
+    .select(hide_id)
+    .populate('sellerId', hide_id)
     .populate('stationId', stationFilter)
     .exec(function(err, stuffs) {
         if (err) {
@@ -98,7 +138,7 @@ exports.latelyInfo = function(req, res){
         .sort({createdDate : -1})
         .skip((parseInt(req.params.page)-1)*6)
         .limit(6)
-        .populate('sellerId', sellerFilter)
+        .populate('sellerId', hide_id)
         .populate('stationId', stationFilter)
         .exec(function(err, stuffs) {
           if(err){

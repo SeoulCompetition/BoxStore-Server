@@ -2,20 +2,25 @@ var Station = require('mongoose').model('Station');
 
 //post'/station'
 exports.create = function(req, res) {
-    var station = new Station(req.body);
-    station.save(function(err) {
-        if (err) {
-            res.status(500).json({
-                "result": "ERR",
-                "message": err
-            });
-        } else {
-            res.json({
-                "result": "SUCCESS",
-                "message": "등록 성공"
-            });
+  var errArr = [];
+  var endNum = 0;
+  var stationArr = req.body;
+  stationArr.forEach(function(item){
+    var station = new Station(item);
+    station.save(function(err){
+      if(err) errArr.push(err);
+      endNum++;
+      if(endNum == stationArr.length){
+        if(errArr.length) res.json(errArr);
+        else{
+          res.json({
+            "result": "SUCCESS",
+            "message": endNum+"개 등록성공"
+          });
         }
+      }
     });
+  });
 };
 
 //get '/station'
@@ -92,17 +97,36 @@ exports.addCount = function(stationId) {
         if (err) {
             return err;
         } else {
-            station.stuffCount = station.stuffCount + 1;
+            station.stuffCount++;
             station.save(function(err2) {
                 if (err2) {
                     return err2;
                 } else {
-                    return true;
+                    return false;
                 }
             })
         }
     });
   };
+  exports.setCount = function(_stationName, count) {
+    Station.findOne({
+            stationName: _stationName
+      })
+      .exec(function(err, station) {
+          if (err) {
+              return err;
+          } else {
+              station.stuffCount = count;
+              station.save(function(err2) {
+                  if (err2) {
+                      return err2;
+                  } else {
+                      return false;
+                  }
+              })
+          }
+      });
+    };
 
 //get '/station/popular'
 exports.stationRanking = function(req, res) {
