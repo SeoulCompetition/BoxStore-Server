@@ -18,6 +18,7 @@ var StuffSchema = new Schema({
     },
     transactionStatus: {
         type: String,
+        enum : ['Sell', 'Selling', 'Selled']
         default: "Sell"
     },
     createdDate: {
