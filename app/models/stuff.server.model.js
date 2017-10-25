@@ -39,7 +39,21 @@ var StuffSchema = new Schema({
         type: String,
         enum : ['NEW','USED','DAMAGED'],
         default: 'USED'
-    }
+    },
+    negotiation: [{
+        stationId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Station'
+        },
+        price: {
+          type: Number
+        },
+        done: {
+          type: String,
+          enum: ['None', 'Request', 'Done'],
+          default: 'None'
+        }
+    }]
     // location 형식에 맞게 추가
 }, {versionKey: false});
 
