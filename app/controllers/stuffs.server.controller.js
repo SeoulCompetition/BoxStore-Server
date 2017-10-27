@@ -131,6 +131,8 @@ exports.info = function(req, res) {
 //get '/stuffs/negotiation/:stuffId'
 exports.getNegotiation = function(req, res){
   Stuff.findById(req.params.stuffId)
+    .populate('negotiation', hide_id)
+    .populate('stationId', stationFilter)
     .exec(function(err, stuff){
       if(err){
         res.status(500).json({
@@ -144,21 +146,7 @@ exports.getNegotiation = function(req, res){
             "message": "Negotiation does not exist."
           });
         }else{
-          Station.findById(stuff.negotiation.stationId)
-            .exec(function(err,station){
-              if(err){
-                res.status(500).json({
-                    "result": "ERR",
-                    "message": err
-                });
-              }else{
-                res.json({
-                    "stationName": station.stationName,
-                    "price": stuff.negotiation.price,
-                    "done": stuff.negotiation.done
-                });
-              }
-            });
+            res.json(stuff.negotiation);
         }
       }
     });
@@ -219,6 +207,79 @@ exports.confirmNegotiation = function(req, res){
               res.json({
                   "result" : "SUCCESS",
                   "message" : "Confirm Negotiation"
+              });
+          }
+        });
+      }
+    });
+};
+
+//get '/stuffs/receipt/:stuffId'
+exports.getReceipt =function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .populate('receipt', hide_id)
+    .populate('stationId', stationFilter)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+            "result" : "ERR",
+            "message" : err
+        });
+      }else{
+        if(stuff.receipt.done == "None"){
+          res.json({
+            "result": "None",
+            "message": "Negotiation does not exist."
+          });
+        }else{
+          res.json(stuff.receipt);
+        }
+      }
+    });
+};
+
+//put '/stuffs/receipt/:stuffId'
+exports.requestReceipt = function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+          "result" : "ERR",
+          "message" : err
+        });
+      }else{
+        Station.findOne({stationName : req.body.stationName})
+          .exec(function(err, station){
+            stuff.receipt = req.body;
+            stuff.receipt.stationId = station._id;
+            stuff.receipt.done = 'Request';
+          });
+      }
+    });
+};
+
+//put '/stuffs/receipt/confirm/:stuffId'
+exports.confirmReceipt = function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+            "result" : "ERR",
+            "message" : err
+        });
+      }else{
+        stuff.receipt.done = 'Done';
+        stuff.transactionStatus = 'Sold';
+        stuff.save(function(err){
+          if(err){
+            res.status(500).json({
+                "result" : "ERR",
+                "message" : err
+            });
+          }else{
+              res.json({
+                  "result" : "SUCCESS",
+                  "message" : "Transaction Done"
               });
           }
         });

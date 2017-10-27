@@ -56,6 +56,33 @@ var StuffSchema = new Schema({
           // 'None', 'Request', 'Done'
           default: 'None'
         }
+    },
+    receipt: {
+        imageUrl: {
+          type: Array
+        },
+        stationId: {
+          type: Schema.Types.ObjectId,
+          ref:'Station',
+          default:'None'
+        },
+        lockerNum: {
+          type: String,
+          default: 'None'
+        },
+        lockerPw: {
+          type: String,
+          default: 'None'
+        },
+        lockerInfo: {
+          type: String,
+          default: 'None'
+        },
+        done: {
+          type: String,
+          //'None','Request', 'Done'
+          defalut: 'None'
+        }
     }
     // location 형식에 맞게 추가
 }, {versionKey: false});

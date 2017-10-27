@@ -17,6 +17,13 @@ module.exports = function(app) {
     app.route('/stuffs/negotiation/confirm/:stuffId')
         .put(stuffs.confirmNegotiation);
 
+    app.route('/stuffs/receipt/:stuffId')
+        .get(stuffs.getReceipt)
+        .put(stuffs.requestReceipt);
+
+    app.route('/stuffs/receipt/confirm/:stuffId')
+        .put(stuffs.confrimReceipt);
+
     app.route('/stuffs/lately/:stationName/:page')
         .get(stuffs.latelyInfo);
 
