@@ -16,11 +16,6 @@ var StuffSchema = new Schema({
         type: Number,
         require: true
     },
-    transactionStatus: {
-        type: String,
-        enum : ['Sell', 'Selling', 'Gone','Selled']
-        default: "Sell"
-    },
     createdDate: {
         type: Date,
         default: Date.now
@@ -35,10 +30,32 @@ var StuffSchema = new Schema({
     category: {
         type: String
     },
-    used: {
+    transactionStatus: {
         type: String,
-        enum : ['NEW','USED','DAMAGED'],
-        default: 'USED'
+        enum : ['Sell', 'Selling', 'Sold'],
+        default: "Sell"
+    },
+    stuffState: {
+        type: String
+    },
+    postType: {
+        type: String
+    },
+    negotiation: {
+        stationId: {
+          type: Schema.Types.ObjectId,
+          ref: 'Station',
+          defalut: 'None'
+        },
+        price: {
+          type: Number,
+          default: 0
+        },
+        done: {
+          type: String,
+          // 'None', 'Request', 'Done'
+          default: 'None'
+        }
     }
     // location 형식에 맞게 추가
 }, {versionKey: false});

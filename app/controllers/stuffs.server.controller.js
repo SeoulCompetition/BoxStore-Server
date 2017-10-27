@@ -107,7 +107,6 @@ exports.list = function(req, res) {
 };
 
 exports.info = function(req, res) {
-    console.log(req.params.stuffId);
     Stuff.find({
       _id : req.params.stuffId
     })
@@ -129,6 +128,103 @@ exports.info = function(req, res) {
     });
 };
 
+//get '/stuffs/negotiation/:stuffId'
+exports.getNegotiation = function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+            "result": "ERR",
+            "message": err
+        });
+      }else{
+        if(stuff.negotiation.done == "None"){
+          res.json({
+            "result": "None",
+            "message": "Negotiation does not exist."
+          });
+        }else{
+          Station.findById(stuff.negotiation.stationId)
+            .exec(function(err,station){
+              if(err){
+                res.status(500).json({
+                    "result": "ERR",
+                    "message": err
+                });
+              }else{
+                res.json({
+                    "stationName": station.stationName,
+                    "price": stuff.negotiation.price,
+                    "done": stuff.negotiation.done
+                });
+              }
+            });
+        }
+      }
+    });
+};
+
+//put '/stuffs/negotiation/:stuffId'
+exports.requestNegotiation = function(req, res){
+  Stuff.findById(req.params.stuffId)
+  .exec(function(err, stuff) {
+      if (err) {
+          res.status(500).json({
+              "result": "ERR",
+              "message": err
+          });
+      } else {
+          Station.findOne({stationName : req.body.stationName})
+            .exec(function(err, station){
+                stuff.negotiation.stationId = station._id;
+                stuff.negotiation.price = req.body.price;
+                stuff.negotiation.done = 'Request'
+                stuff.transactionStatus = 'Selling'
+                stuff.save(function(err){
+                  if(err){
+                    res.status(500).json({
+                        "result": "ERR",
+                        "message": err
+                    });
+                  }else{
+                    res.json({
+                      "result":"SUCCESS",
+                      "message":'Request Negotiation'
+                    });
+                  }
+                });
+            });
+      }
+  });
+};
+
+//put '/stuffs/negotiation/confirm/:stuffId'
+exports.confirmNegotiation = function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+            "result" : "ERR",
+            "message" : err
+        });
+      }else{
+        stuff.negotiation.done = 'Done';
+        stuff.save(function(err){
+          if(err){
+            res.status(500).json({
+                "result" : "ERR",
+                "message" : err
+            });
+          }else{
+              res.json({
+                  "result" : "SUCCESS",
+                  "message" : "Confirm Negotiation"
+              });
+          }
+        });
+      }
+    });
+};
 
 //get '/stuffs/lately/:stationName/:page'
 exports.latelyInfo = function(req, res){
