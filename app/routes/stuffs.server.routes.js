@@ -9,9 +9,13 @@ module.exports = function(app) {
 
     app.route('/stuffs/:stuffId')
         .get(stuffs.info);
+
     app.route('/stuffs/negotiation/:stuffId')
         .get(stuffs.getNegotiation)
         .put(stuffs.requestNegotiation);
+
+    app.route('/stuffs/negotiation/confirm/:stuffId')
+        .put(stuffs.confirmNegotiation);
 
     app.route('/stuffs/lately/:stationName/:page')
         .get(stuffs.latelyInfo);

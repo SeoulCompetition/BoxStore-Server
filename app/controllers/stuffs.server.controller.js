@@ -136,9 +136,30 @@ exports.getNegotiation = function(req, res){
         res.status(500).json({
             "result": "ERR",
             "message": err
-        });|
+        });
       }else{
-        res.json(stuff.negotiation);
+        if(stuff.negotiation.done == "None"){
+          res.json({
+            "result": "None",
+            "message": "Negotiation does not exist."
+          });
+        }else{
+          Station.findById(stuff.negotiation.stationId)
+            .exec(function(err,station){
+              if(err){
+                res.status(500).json({
+                    "result": "ERR",
+                    "message": err
+                });
+              }else{
+                res.json({
+                    "stationName": station.stationName,
+                    "price": stuff.negotiation.price,
+                    "done": stuff.negotiation.done
+                });
+              }
+            });
+        }
       }
     });
 };
@@ -151,7 +172,7 @@ exports.requestNegotiation = function(req, res){
           res.status(500).json({
               "result": "ERR",
               "message": err
-          });|
+          });
       } else {
           Station.findOne({stationName : req.body.stationName})
             .exec(function(err, station){
@@ -177,6 +198,33 @@ exports.requestNegotiation = function(req, res){
   });
 };
 
+//put '/stuffs/negotiation/confirm/:stuffId'
+exports.confirmNegotiation = function(req, res){
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+      if(err){
+        res.status(500).json({
+            "result" : "ERR",
+            "message" : err
+        });
+      }else{
+        stuff.negotiation.done = 'Done';
+        stuff.save(function(err){
+          if(err){
+            res.status(500).json({
+                "result" : "ERR",
+                "message" : err
+            });
+          }else{
+              res.json({
+                  "result" : "SUCCESS",
+                  "message" : "Confirm Negotiation"
+              });
+          }
+        });
+      }
+    });
+};
 
 //get '/stuffs/lately/:stationName/:page'
 exports.latelyInfo = function(req, res){
