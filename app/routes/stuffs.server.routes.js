@@ -22,7 +22,7 @@ module.exports = function(app) {
         .put(stuffs.requestReceipt);
 
     app.route('/stuffs/receipt/confirm/:stuffId')
-        .put(stuffs.confrimReceipt);
+        .put(stuffs.confirmReceipt);
 
     app.route('/stuffs/lately/:stationName/:page')
         .get(stuffs.latelyInfo);

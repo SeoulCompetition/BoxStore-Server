@@ -131,8 +131,7 @@ exports.info = function(req, res) {
 //get '/stuffs/negotiation/:stuffId'
 exports.getNegotiation = function(req, res){
   Stuff.findById(req.params.stuffId)
-    .populate('negotiation', hide_id)
-    .populate('stationId', stationFilter)
+    .populate('negotiation.stationId', stationFilter)
     .exec(function(err, stuff){
       if(err){
         res.status(500).json({
@@ -217,8 +216,7 @@ exports.confirmNegotiation = function(req, res){
 //get '/stuffs/receipt/:stuffId'
 exports.getReceipt =function(req, res){
   Stuff.findById(req.params.stuffId)
-    .populate('receipt', hide_id)
-    .populate('stationId', stationFilter)
+    .populate('receipt.stationId', stationFilter)
     .exec(function(err, stuff){
       if(err){
         res.status(500).json({
@@ -253,6 +251,19 @@ exports.requestReceipt = function(req, res){
             stuff.receipt = req.body;
             stuff.receipt.stationId = station._id;
             stuff.receipt.done = 'Request';
+            stuff.save(function(err){
+              if(err){
+                res.status(500).json({
+                  "result" : "ERR",
+                  "message" : err
+                });
+              }else{
+                res.json({
+                  "result" : "SUCCESS",
+                  "message" : "Request Receipt"
+                });
+              }
+            })
           });
       }
     });

@@ -45,7 +45,6 @@ var StuffSchema = new Schema({
         stationId: {
           type: Schema.Types.ObjectId,
           ref: 'Station',
-          defalut: 'None'
         },
         price: {
           type: Number,
@@ -64,7 +63,6 @@ var StuffSchema = new Schema({
         stationId: {
           type: Schema.Types.ObjectId,
           ref:'Station',
-          default:'None'
         },
         lockerNum: {
           type: String,
