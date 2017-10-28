@@ -38,7 +38,7 @@ exports.uploadForStuff = function(req, res){
   var thumbnailUrls = [];
   var arrSize = imageArr.length;
   imageArr.forEach(function(item){
-      imageUrls.push(IMAGE_URL+item.path);
+      imageUrls.push(IMAGE_URL+item.originalname);
       //resizeImage
       //thumbnailUrls.push(THUMBNAIL_URL+item.originalname.split('.')[0]+'.png');
       arrSize--;
