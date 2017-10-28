@@ -1,5 +1,5 @@
 var fs = require('fs');
-var sharp = require('sharp');
+//var sharp = require('sharp');
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
@@ -16,15 +16,19 @@ exports.upload = function(req, res){
       if(err) console.log('writeFile error: ' + err);
       else{
         console.log('success to upload image: ' + imageName);
-        resizeImage(imageName);
-        var urlArray = [IMAGE_URL+imageName, THUMBNAILS_URL + imageName.split('.')[0] + '.png'];
-        console.log(urlArray);
+  //      resizeImage(imageName);
+        var urlArray = [IMAGE_URL+imageName]//, THUMBNAILS_URL + imageName.split('.')[0] + '.png'];
         resolve(urlArray);  //urlArray[0] -> raw_img_urls, urlArray[1] -> resized_img_urls
       }
     });
   });
 };
 
+exports.uploadForStuff = function(req, res){
+  console.log(req);
+  res.json(req);
+}
+/**
 //imageName: 'image.jpg'
 function resizeImage(imageName){
   sharp(IMAGE_PATH + imageName)
@@ -37,3 +41,4 @@ function resizeImage(imageName){
     }
   });
 };
+**/

@@ -7,4 +7,7 @@ module.exports = function(app) {
     app.route('/users/:uid')
         .get(users.login);
     // app.param('userId', users.userByID);  //app.route보다 먼저 실행됨
+    
+	app.route('/users/keywords')
+		.post(users.keyword.create);
 };

@@ -29,7 +29,7 @@ module.exports = function(){
   require('../app/routes/categories.server.routes.js')(app);
   require('../app/routes/stuffs.server.routes.js')(app);
   require('../app/routes/stations.server.routes.js')(app);
-
+  require('../app/routes/keywords.server.routes.js')(app);
   app.use(express.static(__dirname + '/public'));
   return app;
 }
