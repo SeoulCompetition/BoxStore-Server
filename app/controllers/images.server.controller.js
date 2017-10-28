@@ -1,6 +1,6 @@
 var fs = require('fs');
 var Stuff = require('mongoose').model('Stuff');
-//var sharp = require('sharp');
+var sharp = require('sharp');
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
