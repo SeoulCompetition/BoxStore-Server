@@ -17,7 +17,7 @@ var WIDE_SIZE = 100;
 exports.uploadForReceipt = function(req, res){
   var item = req.file;
   var imageLink = new ImageLink();
-  imageLink.linkType = "Receipt";
+  imageLink.linkType = "receipt";
   imageLink.sizeType = "original";
   imageLink.key = req.params.stuffId;
   imageLink.imageUrl =  IMAGE_URL + item.path;
@@ -36,7 +36,7 @@ exports.uploadForReceipt = function(req, res){
       //   if(err) console.log('sharp.toFile error: ' + err);
       //   else{
       //     var thumbnailLink = new imageLink();
-      //     thumbnailLink.linkType = "Receipt";
+      //     thumbnailLink.linkType = "receipt";
       //     thumbnailLink.sizeType = "thumbnail";
       //     thumbnailLink.key = req.params.stuffId;
       //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
@@ -55,8 +55,8 @@ exports.uploadForStuff = function(req, res){
   var imageArr = req.files;
   imageArr.forEach(function(item){
       var imageLink = new ImageLink();
-      imageLink.linkType = "Stuff";
-      imageLink.sizeType = "Original";
+      imageLink.linkType = "stuff";
+      imageLink.sizeType = "original";
       imageLink.key = req.params.stuffId;
       imageLink.imageUrl =  IMAGE_URL + item.path;
       imageLink.save(function(err){
@@ -74,8 +74,8 @@ exports.uploadForStuff = function(req, res){
           //   if(err) console.log('sharp.toFile error: ' + err);
           //   else{
           //     var thumbnailLink = new imageLink();
-          //     thumbnailLink.linkType = "Stuff";
-          //     thumbnailLink.sizeType = "Thumbnail";
+          //     thumbnailLink.linkType = "stuff";
+          //     thumbnailLink.sizeType = "thumbnail";
           //     thumbnailLink.key = req.params.stuffId;
           //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
           //   }
