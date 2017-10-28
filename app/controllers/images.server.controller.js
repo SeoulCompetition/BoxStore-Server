@@ -53,6 +53,7 @@ exports.uploadForReceipt = function(req, res){
 
 exports.uploadForStuff = function(req, res){
   var imageArr = req.files;
+  var arrSize = imageArr.length;
   imageArr.forEach(function(item){
       var imageLink = new ImageLink();
       imageLink.linkType = "stuff";
@@ -66,6 +67,13 @@ exports.uploadForStuff = function(req, res){
             "message": err
           });
         }else{
+          arrSize--;
+          if(!arrSize){
+            res.json({
+              "result" : "SUCCESS",
+              "message" : "saved image url to db"
+            });
+          }
           // var imageName = item.originalname;
           // sharp(IMAGE_PATH + imageName)
           // .resize(WIDE_SIZE)
@@ -80,10 +88,6 @@ exports.uploadForStuff = function(req, res){
           //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
           //   }
           // });
-          res.json({
-            "result" : "SUCCESS",
-            "message" : "saved image url to db"
-          });
         }
       });
   });
