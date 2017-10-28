@@ -4,7 +4,7 @@ var Stuff = require('mongoose').model('Stuff');
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
-var IMAGE_URL = '52.78.22.122:3000/';
+var IMAGE_URL = '52.78.22.122:3000/original/';
 var THUMBNAIL_URL = '52.78.22.122:3000/thumbnails/';
 var WIDE_SIZE = 100;
 
@@ -13,8 +13,8 @@ exports.uploadForReceipt = function(req, res){
   //resizeImage
   Stuff.findById(req.params.stuffId)
     .exec(function(err, stuff){
-        stuff.receipt.imageUrl = IMAGE_URL+item.path;;
-        //stuff.receipt.imageUrl = THUMBNAIL_URL+item.originalname;
+        stuff.receipt.imageUrl = IMAGE_URL+item.originalname;;
+        //stuff.receipt.imageUrl = THUMBNAIL_URL+item.originalname.split('.')[0]+'.png';
         stuff.save(function(err){
           if(err){
             res.status(500).json({
@@ -40,7 +40,7 @@ exports.uploadForStuff = function(req, res){
   imageArr.forEach(function(item){
       imageUrls.push(IMAGE_URL+item.path);
       //resizeImage
-      //thumbnailUrls.push(THUMBNAIL_URL+item.originalname);
+      //thumbnailUrls.push(THUMBNAIL_URL+item.originalname.split('.')[0]+'.png');
       arrSize--;
       if(!arrSize){
         Stuff.findById(req.params.stuffId)
