@@ -11,5 +11,6 @@ module.exports = function() {
     require('../app/models/stuff.server.model.js');
     require('../app/models/station.server.model.js');
     require('../app/models/imageLink.server.model.js');
-    return db;
+    require('../app/models/keyword.server.model.js'); 
+   return db;
 }
