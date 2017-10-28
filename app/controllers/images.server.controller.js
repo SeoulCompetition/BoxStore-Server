@@ -1,53 +1,33 @@
 var fs = require('fs');
-var ImageLink = require('mongoose').model('ImageLink');
 var Stuff = require('mongoose').model('Stuff');
 //var sharp = require('sharp');
-var imageFilter = {
-  _id: 0,
-  linkType: 0,
-  sizeType: 0,
-  key: 0
-};
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
 var IMAGE_URL = '52.78.22.122:3000/';
-var THUMBNAIL_URL = '52.78.22.122:3000' + '/thumbnails/';
+var THUMBNAIL_URL = '52.78.22.122:3000/thumbnails/';
 var WIDE_SIZE = 100;
 
 exports.uploadForReceipt = function(req, res){
   var item = req.file;
-  var imageLink = new ImageLink();
-  imageLink.linkType = "receipt";
-  imageLink.sizeType = "original";
-  imageLink.key = req.params.stuffId;
-  imageLink.imageUrl =  IMAGE_URL + item.path;
-  imageLink.save(function(err){
-    if(err){
-      res.status(500).json({
-        "result" : "ERR",
-        "message": err
+  //resizeImage
+  Stuff.findById(req.params.stuffId)
+    .exec(function(err, stuff){
+        stuff.receipt.imageUrl = IMAGE_URL+item.path;;
+        //stuff.receipt.imageUrl = THUMBNAIL_URL+item.originalname;
+        stuff.save(function(err){
+          if(err){
+            res.status(500).json({
+              "result" : "ERR",
+              "message": err
+            });
+          }else{
+            res.json({
+              "result" : "SUCCESS",
+              "message" : "saved image url to db"
+            });
+          }
       });
-    }else{
-      // var imageName = item.originalname;
-      // sharp(IMAGE_PATH + imageName)
-      // .resize(WIDE_SIZE)
-      // .png()
-      // .toFile(THUMBNAIL_PATH + imageName.split('.')[0] + '.png', function(err){
-      //   if(err) console.log('sharp.toFile error: ' + err);
-      //   else{
-      //     var thumbnailLink = new imageLink();
-      //     thumbnailLink.linkType = "receipt";
-      //     thumbnailLink.sizeType = "thumbnail";
-      //     thumbnailLink.key = req.params.stuffId;
-      //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
-      //   }
-      // });
-      res.json({
-        "result" : "SUCCESS",
-        "message" : "saved image url to db"
-      });
-    }
   });
 };
 
@@ -58,43 +38,32 @@ exports.uploadForStuff = function(req, res){
   var thumbnailUrls = [];
   var arrSize = imageArr.length;
   imageArr.forEach(function(item){
-      var imageLink = new ImageLink();
-      imageLink.linkType = "stuff";
-      imageLink.sizeType = "original";
-      imageLink.key = req.params.stuffId;
-      imageLink.imageUrl =  IMAGE_URL + item.path;
       imageUrls.push(IMAGE_URL+item.path);
-      console.log((3-arrSize)+"번: "+imageUrls);
-      imageLink.save(function(err){
-        if(err){
-          res.status(500).json({
-            "result" : "ERR",
-            "message": err
-          });
-        }else{
-          arrSize--;
-          console.log('success to save image: ' + (2-arrSize));
-          if(!arrSize){
-            Stuff.findById(req.params.stuffId)
-              .exec(function(err, stuff){
-                  stuff.imageUrl = imageUrls;
-                  stuff.save(function(err){
-                    if(err){
-                      res.status(500).json({
-                        "result" : "ERR",
-                        "message": err
-                      });
-                    }else{
-                      console.log('stuff.imageUrl: '+stuff.imageUrl);
-                      res.json({
-                        "result" : "SUCCESS",
-                        "message" : "saved image url to db"
-                      });
-                    }
+      //resizeImage
+      //thumbnailUrls.push(THUMBNAIL_URL+item.originalname);
+      arrSize--;
+      if(!arrSize){
+        Stuff.findById(req.params.stuffId)
+          .exec(function(err, stuff){
+              stuff.imageUrl = imageUrls;
+              //stuff.imageUrl = thumbnailUrls;
+              stuff.save(function(err){
+                if(err){
+                  res.status(500).json({
+                    "result" : "ERR",
+                    "message": err
                   });
-                  //stuff.thumbnails = thumbnailUrls;
-              });
-          }
+                }else{
+                  res.json({
+                    "result" : "SUCCESS",
+                    "message" : "saved image url to db"
+                  });
+                }
+            });
+        });
+      }
+  });
+}
           // var imageName = item.originalname;
           // sharp(IMAGE_PATH + imageName)
           // .resize(WIDE_SIZE)
@@ -109,25 +78,17 @@ exports.uploadForStuff = function(req, res){
           //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
           //   }
           // });
-        }
-      });
-  });
-};
 
 exports.getImageLink = function(req ,res){
-  ImageLink.find({
-      linkType: req.params.linkType,
-      sizeType: req.params.sizeType,
-      key: req.params.stuffId
-  }).select(imageFilter)
-    .exec(function(err, imageLinks){
-      if(err){
-        res.status(500).json({
-          "result" : "ERR",
-          "message": err
-        });
-      }else{
-        res.json(imageLinks);
-      }
-  });
+  Stuff.findById(req.params.stuffId)
+      .exec(function(err, stuff){
+        if(err){
+          res.status(500).json({
+            "result" : "ERR",
+            "message": err
+          });
+        }else{
+          res.json(stuff.imageUrl);
+        }
+      });
 };
