@@ -1,6 +1,7 @@
 var Stuff = require('mongoose').model('Stuff');
 var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
+var ObjectId = require('mongoose').Schema.ObjectId;
 var stations = require('../../app/controllers/stations.server.controller');
 
 var hide_id = {
