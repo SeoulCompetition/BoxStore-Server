@@ -1,4 +1,5 @@
 var User = require('mongoose').model('User');
+var request = require("request");
 exports.create = function(req, res, next) {
     var user = new User(req.body);
     user.save(function(err) {
@@ -35,7 +36,8 @@ exports.login = function(req, res) {
 	"phoneNum" : true,
 	"email": true,
 	"userToken": true,
-	"photoURL": true
+	"photoURL": true,
+	"keywords" : true
 	}).lean().exec(function(err, result) {
         if (err) {
 	            res.status(500).json({
@@ -58,9 +60,10 @@ exports.login = function(req, res) {
         }
     });
 };
-exports.keywords.create = function(req,res){
+exports.keywords_create = function(req,res){
 	var id = req.body.uid;
 	var keyword = req.body.keyword;
+	var thisRes= res;
 	User.findOne({
 		uid : id
 	}).lean().exec(function(err,result){
@@ -75,7 +78,30 @@ exports.keywords.create = function(req,res){
 			},{
 				$addToSet: {keywords : keyword}
 			},function(err,res){
-				console.log(err,res);
+				if(err){
+					
+				}else if(res){
+					var options = {
+					  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
+					  method: 'POST',
+					  json: {
+						  "uid" : id,
+						  "keyword" : keyword
+					  }
+					};
+
+					 request(options, function(err,result, body) {
+						 console.log(body);
+						 if(err){
+							 thisRes.status(500).json({
+								 "result" : "err",
+								 "message" : "server error"
+							 });
+						 }else {
+							 thisRes.json(body);
+						 }
+					 });	
+				}
 			});
 		}else {
 			res.status(404).json({
@@ -83,8 +109,5 @@ exports.keywords.create = function(req,res){
 				"message":"잘못된 유저아이디"
 			});
 		}
-		
-	).lean().function(err,result){
-	}
-	}
-}
+	});
+};
