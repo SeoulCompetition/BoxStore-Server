@@ -10,8 +10,22 @@
     "method-override": "^2.3.9",
     "mongoose": "^4.11.13",
     "morgan": "^1.8.2",
+<<<<<<< HEAD
     "multer": "^1.3.0",
     "request": "^2.83.0"
+=======
+<<<<<<< HEAD
+    "multer": "^1.3.0"
+=======
+<<<<<<< HEAD
+    "multer": "^1.3.0"
+=======
+    "request": "^2.83.0"
+    "multer": "^1.3.0",
+    "sharp": "^0.18.4"
+>>>>>>> 3696e9e8e6ab694209c0db963e8720c63c2229d0
+>>>>>>> bc6d3e0d77d36f68ca28ab0ee0dd1a442a40be7e
+>>>>>>> 3cdbdf4d98d8bba7fddea588a73a42c42f9272b8
   },
   "devDependencies": {
     "color": "latest"
