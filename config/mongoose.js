@@ -10,5 +10,6 @@ module.exports = function() {
     require('../app/models/user.server.model.js');
     require('../app/models/stuff.server.model.js');
     require('../app/models/station.server.model.js');
+    require('../app/models/imageLink.server.model.js');
     return db;
 }

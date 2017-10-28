@@ -10,8 +10,8 @@ var imageFilter = {
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
-var IMAGE_URL = 'http://localhost:3000/';
-var THUMBNAIL_URL = 'http://localhost:3000' + '/thumbnails/';
+var IMAGE_URL = '52.78.22.122:3000/';
+var THUMBNAIL_URL = '52.78.22.122:3000' + '/thumbnails/';
 var WIDE_SIZE = 100;
 
 exports.uploadForReceipt = function(req, res){
