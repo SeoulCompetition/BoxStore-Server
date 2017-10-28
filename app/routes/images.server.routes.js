@@ -17,6 +17,6 @@ module.exports = function(app){
   app.route('/receipt/images/:stuffId')
     .post(upload.single('photo'), images.uploadForReceipt);
 
-  app.route('/stuffs/images/:linkType/:stuffId/:sizeType')
+  app.route('/stuffs/images/image/:stuffId')
     .get(images.getImageLink);
 };
