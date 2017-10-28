@@ -9,77 +9,74 @@ var THUMBNAIL_URL = '52.78.22.122:3000/thumbnails/';
 var WIDE_SIZE = 100;
 
 exports.uploadForReceipt = function(req, res){
-  var item = req.file;
-  //resizeImage
+  var imageName = req.file.originalname;
   Stuff.findById(req.params.stuffId)
-    .exec(function(err, stuff){
-        stuff.receipt.imageUrl = IMAGE_URL+item.originalname;;
-        //stuff.receipt.imageUrl = THUMBNAIL_URL+item.originalname.split('.')[0]+'.png';
-        stuff.save(function(err){
-          if(err){
-            res.status(500).json({
-              "result" : "ERR",
-              "message": err
-            });
-          }else{
-            res.json({
-              "result" : "SUCCESS",
-              "message" : "saved image url to db"
-            });
-          }
-      });
+      .exec(function(err, stuff){
+        sharp(IMAGE_PATH + imageName)
+        .resize(WIDE_SIZE)
+        .png()
+        .toFile(THUMBNAIL_PATH + imageName.split('.')[0] + '.png', function(err){
+          if(err) console.log('sharp.toFile error: ' + err);
+          else{
+            stuff.receipt.imageUrl = THUMBNAIL_URL+itemName.split('.')[0]+'.png';
+            stuff.save(function(err){
+              if(err){
+                res.status(500).json({
+                  "result" : "ERR",
+                  "message": err
+                });
+              }else{
+                res.json({
+                  "result" : "SUCCESS",
+                  "message" : "saved image url to db"
+                });
+              }
+          });
+        }
   });
+});
 };
 
 
 exports.uploadForStuff = function(req, res){
   var imageArr = req.files;
   var imageUrls =[];
-  var thumbnailUrls = [];
   var arrSize = imageArr.length;
   imageArr.forEach(function(item){
-      imageUrls.push(IMAGE_URL+item.originalname);
-      //resizeImage
-      //thumbnailUrls.push(THUMBNAIL_URL+item.originalname.split('.')[0]+'.png');
-      arrSize--;
-      if(!arrSize){
-        Stuff.findById(req.params.stuffId)
-          .exec(function(err, stuff){
-              stuff.imageUrl = imageUrls;
-              //stuff.imageUrl = thumbnailUrls;
-              stuff.save(function(err){
-                if(err){
-                  res.status(500).json({
-                    "result" : "ERR",
-                    "message": err
-                  });
-                }else{
-                  res.json({
-                    "result" : "SUCCESS",
-                    "message" : "saved image url to db"
-                  });
-                }
-            });
-        });
+    var imageName = item.originalname;
+    sharp(IMAGE_PATH + imageName)
+    .resize(WIDE_SIZE)
+    .png()
+    .toFile(THUMBNAIL_PATH + imageName.split('.')[0] + '.png', function(err){
+      if(err) console.log('sharp.toFile error: ' + err);
+      else{
+        imageUrls.push(THUMBNAIL_URL+imageName.split('.')[0] + '.png');
+        arrSize--;
+        if(!arrSize){
+          Stuff.findById(req.params.stuffId)
+            .exec(function(err, stuff){
+                stuff.imageUrl = imageUrls;
+                stuff.save(function(err){
+                  if(err){
+                    res.status(500).json({
+                      "result" : "ERR",
+                      "message": err
+                    });
+                  }else{
+                    res.json({
+                      "result" : "SUCCESS",
+                      "message" : "saved image url to db"
+                    });
+                  }
+              });
+          });
+        }
       }
+    });
   });
-}
-          // var imageName = item.originalname;
-          // sharp(IMAGE_PATH + imageName)
-          // .resize(WIDE_SIZE)
-          // .png()
-          // .toFile(THUMBNAIL_PATH + imageName.split('.')[0] + '.png', function(err){
-          //   if(err) console.log('sharp.toFile error: ' + err);
-          //   else{
-          //     var thumbnailLink = new imageLink();
-          //     thumbnailLink.linkType = "stuff";
-          //     thumbnailLink.sizeType = "thumbnail";
-          //     thumbnailLink.key = req.params.stuffId;
-          //     thumbnailLink.imageUrl = THUMBNAIL_URL + imagename.split('.')[0] + '.png';
-          //   }
-          // });
+};
 
-exports.getImageLink = function(req ,res){
+exports.getStuffImages = function(req ,res){
   Stuff.findById(req.params.stuffId)
       .exec(function(err, stuff){
         if(err){
@@ -89,6 +86,20 @@ exports.getImageLink = function(req ,res){
           });
         }else{
           res.json(stuff.imageUrl);
+        }
+      });
+};
+
+exports.getReceiptImage = function(req, res){
+  Stuff.findById(req.params.stuffId)
+      .exec(function(err, stuff){
+        if(err){
+          res.status(500).json({
+            "result" : "ERR",
+            "message": err
+          });
+        }else{
+          res.json(stuff.receipt.imageUrl);
         }
       });
 };

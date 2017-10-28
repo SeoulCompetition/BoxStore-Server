@@ -12,11 +12,10 @@ var upload = multer({ storage: storage });
 
 module.exports = function(app){
   app.route('/stuffs/images/:stuffId')
-    .post(upload.array('photo', 8), images.uploadForStuff);
+    .post(upload.array('photo', 8), images.uploadForStuff)
+    .get(images.getStuffImages);
 
   app.route('/receipt/images/:stuffId')
-    .post(upload.single('photo'), images.uploadForReceipt);
-
-  app.route('/stuffs/images/image/:stuffId')
-    .get(images.getImageLink);
+    .post(upload.single('photo'), images.uploadForReceipt)
+    .get(images.getReceiptImage);
 };

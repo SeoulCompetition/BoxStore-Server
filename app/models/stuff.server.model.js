@@ -61,7 +61,7 @@ var StuffSchema = new Schema({
     },
     receipt: {
         imageUrl: {
-          type: Array
+          type: String
         },
         stationId: {
           type: Schema.Types.ObjectId,
