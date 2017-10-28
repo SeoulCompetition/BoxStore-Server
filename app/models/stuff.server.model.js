@@ -2,6 +2,9 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var StuffSchema = new Schema({
+    _id : {
+      type: String
+    },
     sellerId: {
         type: Schema.Types.ObjectId,
         ref: 'User'
