@@ -1,5 +1,6 @@
 var fs = require('fs');
 var ImageLink = require('mongoose').model('ImageLink');
+var Stuff = require('mongoose').model('Stuff');
 //var sharp = require('sharp');
 var imageFilter = {
   _id: 0,
@@ -53,6 +54,8 @@ exports.uploadForReceipt = function(req, res){
 
 exports.uploadForStuff = function(req, res){
   var imageArr = req.files;
+  var imageUrls =[];
+  var thumbnailUrls = [];
   var arrSize = imageArr.length;
   imageArr.forEach(function(item){
       var imageLink = new ImageLink();
@@ -60,6 +63,8 @@ exports.uploadForStuff = function(req, res){
       imageLink.sizeType = "original";
       imageLink.key = req.params.stuffId;
       imageLink.imageUrl =  IMAGE_URL + item.path;
+      imageUrls.push(IMAGE_URL+item.path);
+      console.log((3-arrSize)+"번: "+imageUrls);
       imageLink.save(function(err){
         if(err){
           res.status(500).json({
@@ -68,11 +73,27 @@ exports.uploadForStuff = function(req, res){
           });
         }else{
           arrSize--;
+          console.log('success to save image: ' + (2-arrSize));
           if(!arrSize){
-            res.json({
-              "result" : "SUCCESS",
-              "message" : "saved image url to db"
-            });
+            Stuff.findById(req.params.stuffId)
+              .exec(function(err, stuff){
+                  stuff.imageUrl = imageUrls;
+                  stuff.save(function(err){
+                    if(err){
+                      res.status(500).json({
+                        "result" : "ERR",
+                        "message": err
+                      });
+                    }else{
+                      console.log('stuff.imageUrl: '+stuff.imageUrl);
+                      res.json({
+                        "result" : "SUCCESS",
+                        "message" : "saved image url to db"
+                      });
+                    }
+                  });
+                  //stuff.thumbnails = thumbnailUrls;
+              });
           }
           // var imageName = item.originalname;
           // sharp(IMAGE_PATH + imageName)
