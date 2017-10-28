@@ -3,6 +3,8 @@ var MongoClient = require("mongodb").MongoClient;
 
 exports.list = function(req, res, next) {
     var category = req.params.category_id || null;
+	category =category.replace(/\./g,"/");
+	console.log(category);
     var filter = {
                 _id: 0,
                 name: 1,
