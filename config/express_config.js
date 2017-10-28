@@ -3,8 +3,7 @@ var express = require('express'),
   compress = require('compression'),
   bodyParser = require('body-parser'),
   methodOverride = require('method-override'),
-  config = require('./config')
-  ;
+  config = require('./config');
 
 module.exports = function(){
   var app = express();

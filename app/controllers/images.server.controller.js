@@ -47,7 +47,6 @@ exports.uploadForReceipt = function(req, res){
 
 exports.uploadForStuff = function(req, res){
   console.log(req);
-  res.json(req);
 };
 
 /**
