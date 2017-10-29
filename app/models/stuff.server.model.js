@@ -38,7 +38,7 @@ var StuffSchema = new Schema({
         enum : ['Sell', 'Selling', 'Sold'],
         default: "Sell"
     },
-    stuffState: {
+    productState: {
         type: String
     },
     postType: {

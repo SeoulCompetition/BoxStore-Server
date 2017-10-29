@@ -2,7 +2,7 @@ var http = require("http");
 
 exports.checkCheat = function(req, res){
   var field = 'H'; //전화번호 "H", 계좌번호 "A"
-  var keyword = req.body.keyword; //전화번호나 계좌번호
+  var keyword = req.params.keyword; //전화번호나 계좌번호
 
   var options = {
     hostname: 'net-durumi.cyber.go.kr',
