@@ -1,3 +1,7 @@
 node_modules
 goorm.manifest
 manifest.yml
+*.log
+package-lock.json
+*.jpg
+*.png
