@@ -29,6 +29,7 @@ module.exports = function(){
   require('../app/routes/stuffs.server.routes.js')(app);
   require('../app/routes/stations.server.routes.js')(app);
   require('../app/routes/keywords.server.routes.js')(app);
+  require('../app/routes/cheat.server.routes.js')(app);
   app.use(express.static(__dirname + '/public'));
   return app;
 }

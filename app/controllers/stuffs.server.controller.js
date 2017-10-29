@@ -14,7 +14,9 @@ var stationFilter = {
 
 //seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {
-  Station.findOne({stationName: req.body.stationName})
+  var reqStationName = req.body.stationName;
+  reqStationName = reqStationName.trim();
+  Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
       if(err) res.json(err);
       Seller.findOne({uid: req.body.sellerId})
