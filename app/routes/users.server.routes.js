@@ -11,4 +11,6 @@ module.exports = function(app) {
     
 	app.route('/users/keywords')
 		.post(users.keywords_create);
+	app.route('/users/:uid/keywords')
+		.get(users.keywords_list);
 };
