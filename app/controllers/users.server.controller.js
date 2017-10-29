@@ -63,6 +63,7 @@ exports.keywords_create = function(req,res){
 	var id = req.body.uid;
 	var keyword = req.body.keyword;
 	var thisRes= res;
+	var token = req.params.userToken;
 	User.findOne({
 		uid : id
 	}).lean().exec(function(err,result){
@@ -85,7 +86,8 @@ exports.keywords_create = function(req,res){
 					  method: 'POST',
 					  json: {
 						  "uid" : id,
-						  "keyword" : keyword
+						  "keyword" : keyword,
+						  "userToken" : token
 					  }
 					};
 
