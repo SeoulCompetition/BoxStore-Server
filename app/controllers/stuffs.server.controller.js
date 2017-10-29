@@ -12,6 +12,11 @@ var stationFilter = {
   stuffCount: 0
 };
 
+var stuffFilter = {
+  negotiation: 0,
+  receipt: 0
+};
+
 //seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {
   var reqStationName = req.body.stationName;
@@ -300,14 +305,13 @@ exports.confirmReceipt = function(req, res){
     });
 };
 
-//get '/stuffs/lately/:stationName/:page'
+//get '/stuffs/lately/:stationName'
 exports.latelyInfo = function(req, res){
   Station.findOne({stationName : req.params.stationName})
     .exec(function(err, station){
       Stuff.find({ stationId : station._id})
         .sort({createdDate : -1})
-        .skip((parseInt(req.params.page)-1)*6)
-        .limit(6)
+        .select(stuffFilter)
         .populate('sellerId', hide_id)
         .populate('stationId', stationFilter)
         .exec(function(err, stuffs) {
@@ -323,5 +327,27 @@ exports.latelyInfo = function(req, res){
             });
           }
         });
+    });
+};
+
+//get '/stuffs/latelyAll'
+exports.latelyInfoAll = function(req, res){
+  Stuff.find()
+    .sort({createdDate : -1})
+    .select(stuffFilter)
+    .populate('sellerId', hide_id)
+    .populate('stationId', stationFilter)
+    .exec(function(err, stuffs) {
+      if(err){
+        res.status(500).json({
+            "result": "ERR",
+            "message": err
+        });
+      }else{
+        res.json({
+          "result":"SUCCESS",
+          "stuffs":stuffs
+        });
+      }
     });
 };
