@@ -3,6 +3,7 @@ var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 var ObjectId = require('mongoose').Schema.ObjectId;
 var stations = require('../../app/controllers/stations.server.controller');
+var fcmPush = require('../apis/fcm_push');
 
 var hide_id = {
   _id: 0
@@ -166,8 +167,8 @@ exports.requestNegotiation = function(req, res){
             .exec(function(err, station){
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
-                stuff.negotiation.done = 'Request'
-                stuff.transactionStatus = 'Selling'
+                stuff.negotiation.done = 'Request';
+                stuff.transactionStatus = 'Selling';
                 stuff.save(function(err){
                   if(err){
                     res.status(500).json({
