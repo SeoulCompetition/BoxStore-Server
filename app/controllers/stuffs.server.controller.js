@@ -36,7 +36,7 @@ exports.create = function(req, res, next) {
             }
             var stuff = new Stuff(req.body);
             stuff.sellerId = seller._id;
-            stuff.stationId = station._id;	
+            stuff.stationId = station._id;
             stuff.save(function(err) {
                 if (err) {
                     res.status(500).json({
@@ -50,7 +50,7 @@ exports.create = function(req, res, next) {
 					Keyword.find({name : {$in:[keyword,keyword_trim]}},function(err,result){
 						// console.log(result);
 						if(err){
-							
+
 						}
 						else if(result && result.length > 0){
 							for(var idx in result){
@@ -380,4 +380,15 @@ exports.latelyInfoAll = function(req, res){
         });
       }
     });
+};
+
+exports.putProductState = function(req,res){
+  Stuff.findById(req.params.stuffId)
+      .exec(function(err, stuff){
+        stuff.productState = req.body.productState;
+        stuff.save(function(err){
+          if(err) res.json(err);
+          else res.json("SUCCESS");
+        });
+      });
 };

@@ -30,4 +30,6 @@ module.exports = function(app) {
 
     app.route('/stuffs/admin')
         .post(stuffs.createByAdmin);
+    app.route('/stuffs/admin/productState/:stuffId')
+        .put(stuffs.putProductState);
 };
