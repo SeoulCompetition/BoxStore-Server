@@ -2,7 +2,8 @@ var stuffs = require('../../app/controllers/stuffs.server.controller');
 
 module.exports = function(app) {
     app.route('/stuffs')
-        .post(stuffs.create);
+        .post(stuffs.create)
+        .get(stuffs.latelyInfoAll);
 
     app.route('/stuffs/list/:category')
         .get(stuffs.list);
@@ -24,7 +25,7 @@ module.exports = function(app) {
     app.route('/stuffs/receipt/confirm/:stuffId')
         .put(stuffs.confirmReceipt);
 
-    app.route('/stuffs/lately/:stationName/:page')
+    app.route('/stuffs/lately/:stationName')
         .get(stuffs.latelyInfo);
 
     app.route('/stuffs/admin')
