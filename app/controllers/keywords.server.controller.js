@@ -1,6 +1,7 @@
 var Keyword = require('mongoose').model('Keyword');
 exports.create = function(req, res, next) {
 	var id = req.body.uid;
+	var token = req.body.userToken;
 	var keywordName = req.body.keyword;
 	Keyword.findOne({name:keywordName},function(err,result){
 		if(err){
@@ -15,7 +16,7 @@ exports.create = function(req, res, next) {
 			Keyword.update({	
 				name : keywordName
 			},{
-				$addToSet: { users : id}
+				$addToSet: { users :token}
 			},function(err,result){
 				res.json( {
 					"result" : "DUPLICATE",
@@ -26,7 +27,7 @@ exports.create = function(req, res, next) {
 			console.log("no kewyord");
 			var saveKeyword = new Keyword({
 				"name":keywordName,
-				"users" :[id]
+				"users" :[token]
 			});
 			saveKeyword.save(function(err,result){
 				res.json( {

@@ -36,8 +36,7 @@ exports.login = function(req, res) {
 	"phoneNum" : true,
 	"email": true,
 	"userToken": true,
-	"photoURL": true,
-	"keywords" : true
+	"photoURL": true
 	}).lean().exec(function(err, result) {
         if (err) {
 	            res.status(500).json({
@@ -64,6 +63,7 @@ exports.keywords_create = function(req,res){
 	var id = req.body.uid;
 	var keyword = req.body.keyword;
 	var thisRes= res;
+	var token = req.params.userToken;
 	User.findOne({
 		uid : id
 	}).lean().exec(function(err,result){
@@ -86,7 +86,8 @@ exports.keywords_create = function(req,res){
 					  method: 'POST',
 					  json: {
 						  "uid" : id,
-						  "keyword" : keyword
+						  "keyword" : keyword,
+						  "userToken" : token
 					  }
 					};
 
@@ -110,4 +111,32 @@ exports.keywords_create = function(req,res){
 			});
 		}
 	});
+};
+exports.keywords_list = function(req,res){
+	var id = req.params.uid;
+	 User.findOne({
+        uid: id
+    },{
+		"keywords" : true
+	}).lean().exec(function(err, result) {
+        if (err) {
+	            res.status(500).json({
+        	        "result": "ERR",
+                	"message": "db 에러"
+	            });
+        } else {
+            if (result) {
+                res.json({
+                    "result": "SUCCESS",
+                    "message": "로그인 성공",
+                    "keywordList" : result.keywords
+                });
+            } else {
+                res.status(404).json({
+			"result": "ERR",
+			"message": "로그인 실패"
+		});
+            }
+        }
+    });
 };

@@ -2,6 +2,8 @@ var Stuff = require('mongoose').model('Stuff');
 var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
 var stations = require('../../app/controllers/stations.server.controller');
+var fcmPush = require('../apis/fcm_push');
+var Keyword = require('mongoose').model('Keyword');
 
 var hide_id = {
   _id: 0
@@ -34,7 +36,7 @@ exports.create = function(req, res, next) {
             }
             var stuff = new Stuff(req.body);
             stuff.sellerId = seller._id;
-            stuff.stationId = station._id;
+            stuff.stationId = station._id;	
             stuff.save(function(err) {
                 if (err) {
                     res.status(500).json({
@@ -43,6 +45,34 @@ exports.create = function(req, res, next) {
                     });
                 } else {
                     stations.addCount(station._id);
+					var keyword = stuff.stuffName;
+					var keyword_trim = keyword.replace(/\s/g,"");
+					Keyword.find({name : {$in:[keyword,keyword_trim]}},function(err,result){
+						// console.log(result);
+						if(err){
+							
+						}
+						else if(result && result.length > 0){
+							for(var idx in result){
+								var users = result[idx].users;
+								for(var i=0;i<users.length;i++){
+									console.log(users[i]);
+									var data ={
+										dest : "dQ0zD8wFN0Q:APA91bHmWJ5G1_U8YiVxl5BqUBjkA8ypwR7WRYDnyG0LEyTx9WuQCWfyTZF09VmcNCFytKBGl9FmNJW9jcrHV3ZhWAJtlAGrKej6fHpv8l9Ygr2c5XO6lfyvb6fh8OVYcCIWzbunkt5G",
+										type : "push",
+										keyword :result[idx].name
+									};
+									fcmPush.sendMessage(data);
+								}
+							}
+							// var data ={
+							// 	dest: result.
+							// 	type:
+							// 	keywor:
+							// }
+							// fcmPush
+						}
+					});
                     res.json({
                         "result": "SUCCESS",
                         "message": "등록 성공"
@@ -172,8 +202,8 @@ exports.requestNegotiation = function(req, res){
             .exec(function(err, station){
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
-                stuff.negotiation.done = 'Request'
-                stuff.transactionStatus = 'Selling'
+                stuff.negotiation.done = 'Request';
+                stuff.transactionStatus = 'Selling';
                 stuff.save(function(err){
                   if(err){
                     res.status(500).json({
