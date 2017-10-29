@@ -4,8 +4,8 @@ var sharp = require('sharp');
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
-var IMAGE_URL = '52.78.22.122:3000/original/';
-var THUMBNAIL_URL = '52.78.22.122:3000/thumbnails/';
+var IMAGE_URL = 'http://52.78.22.122:3000/original/';
+var THUMBNAIL_URL = 'http://52.78.22.122:3000/thumbnails/';
 var WIDE_SIZE = 400;
 
 exports.uploadForReceipt = function(req, res){
