@@ -110,7 +110,7 @@ exports.getMap = function(req,res){
   if(fs.existsSync(MAP_PATH+req.params.stationName+'.jpg')){
     res.json({
         "result" : "SUCCESS",
-        "mapURL" : MAP_PATH+req.params.stationName+'.jpg'
+        "mapURL" : MAP_URL+req.params.stationName+'.jpg'
     });
   }else{
     res.status(500).json({
