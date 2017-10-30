@@ -41,7 +41,10 @@ var UserSchema = new Schema({
   point : {
     type : Number,
     default: 300000
-  }
+  },
+	storeReviews : {
+		type : Array
+	}
 }, {versionKey: false});
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때

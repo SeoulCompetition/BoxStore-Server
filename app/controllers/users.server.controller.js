@@ -1,11 +1,11 @@
 var User = require('mongoose').model('User');
 var Stuff = require('mongoose').model('Stuff');
 var request = require("request");
+var async = require("async");
 
 var sellerFilter = {_id: 0,   point: 0, keeping: 0, keyword: 0, join_date: 0};
 var stationFilter = {_id: 0, stuffCount: 0};
 var stuffFilter = {negotiation: 0, receipt: 0};
-
 exports.create = function(req, res, next) {
     var user = new User(req.body);
     user.save(function(err) {
@@ -70,48 +70,41 @@ exports.keywords_create = function(req,res){
 	var keyword = req.body.keyword;
 	var thisRes= res;
 	var token = req.params.userToken;
-	User.findOne({
+	User.update({
 		uid : id
-	}).lean().exec(function(err,result){
+	},{
+		$addToSet: {keywords : keyword}
+	},function(err,res){
+		console.log(err,res);
 		if(err){
-			res.status(500).json({
-				"result":"ERR",
-				"message":"db에러"
+			thisRes.status(500).json({
+				"result": "ERR",
+				"message": "db 에러"
 			});
-		}else if(result) {
-			User.update({
-				uid : id
-			},{
-				$addToSet: {keywords : keyword}
-			},function(err,res){
-				if(err){
+		}else if(res.n>0){
+			var options = {
+			  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
+			  method: 'POST',
+			  json: {
+				  "uid" : id,
+				  "keyword" : keyword,
+				  "userToken" : token
+			  }
+			};
 
-				}else if(res){
-					var options = {
-					  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
-					  method: 'POST',
-					  json: {
-						  "uid" : id,
-						  "keyword" : keyword,
-						  "userToken" : token
-					  }
-					};
-
-					 request(options, function(err,result, body) {
-						 console.log(body);
-						 if(err){
-							 thisRes.status(500).json({
-								 "result" : "err",
-								 "message" : "server error"
-							 });
-						 }else {
-							 thisRes.json(body);
-						 }
+			 request(options, function(err,result, body) {
+				 console.log(body);
+				 if(err){
+					 thisRes.status(500).json({
+						 "result" : "err",
+						 "message" : "server error"
 					 });
-				}
-			});
-		}else {
-			res.status(404).json({
+				 }else {
+					 thisRes.json(body);
+				 }
+			 });	
+		}else{
+			thisRes.status(404).json({
 				"result":"ERR",
 				"message":"잘못된 유저아이디"
 			});
@@ -228,7 +221,7 @@ exports.addpoint = function(req,res){
             "result": "SUCCESS",
             "point": user.point
         });
-      })
+      });
     });
 };
 
@@ -243,3 +236,100 @@ exports.getPoint = function(req, res){
       });
     });
 };
+
+
+exports.write_reviews = function(req, res){
+	var id = req.params.uid;
+	var reviewerId = req.body.reviewerId;
+	var reviewContents = req.body.contents;
+	var starPoint = req.body.starPoint;
+	
+	async.waterfall([
+		function(callback){
+			User.findOne({
+				uid : reviewerId
+			},function(err,result){
+				if(err){
+					callback("DB");
+				}else if(result){
+					callback(null,result.photoURL);
+				}else{
+					callback("ID");
+				}
+			});
+		},
+		function(data,callback){
+			var reviewData = {
+				reviewerId : reviewerId,
+				revieweContents : reviewContents,
+				starPoint : starPoint,
+				photoURL : data,
+				created : Date.now()
+			};
+			User.update({
+				uid : id
+			},{
+				$addToSet: {storeReviews : reviewData}
+			},function(err,result){
+				if(err){
+					callback("DB");
+					
+				}else if(result.n>0){
+					callback(null);
+				}else{
+					callback("ID");
+				}
+			});
+		}
+	],function(err,result){
+		if(err){
+			if(err === 'DB'){
+				res.status(500).json({
+						"result": "ERR",
+						"message": "db 에러"
+					});
+			}else if ( err === 'ID'){
+				res.status(404).json({
+					"result":"ERR",
+					"message":"잘못된 유저아이디"
+				});
+			}else{
+				res.status(500).json({
+					"result": "ERR",
+					"message": "server 에러"
+				});
+			}
+		}else{
+			res.json({
+				"result":"SUCCESS",
+				"message" : "review 등록"
+			});
+		}
+	});
+	
+};
+exports.reviews_list = function(req,res){
+	var id = req.params.uid;
+	User.findOne({
+		uid : id
+	},function(err,result){
+		if(err){
+			res.status(500).json({
+				"result": "ERR",
+				"message": "db 에러"
+			});
+		}else if(result){
+			res.json({
+				"result" : "SUCCESS",
+				"reviewList" : result.storeReviews
+			});
+		}else{
+			res.status(404).json({
+				"result":"ERR",
+				"message":"잘못된 유저아이디"
+			});
+		}
+	});
+};
+
+	
