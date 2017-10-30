@@ -5,19 +5,9 @@ var stations = require('../../app/controllers/stations.server.controller');
 var fcmPush = require('../apis/fcm_push');
 var Keyword = require('mongoose').model('Keyword');
 
-var hide_id = {
-  _id: 0
-};
-
-var stationFilter = {
-  _id: 0,
-  stuffCount: 0
-};
-
-var stuffFilter = {
-  negotiation: 0,
-  receipt: 0
-};
+var hide_id = {_id: 0};
+var stationFilter = {_id: 0, stuffCount: 0};
+var stuffFilter = {negotiation: 0, receipt: 0};
 
 //seller_id: User.uid, stationLine: Station.stationLine, stationName: Station.stationName
 exports.create = function(req, res, next) {

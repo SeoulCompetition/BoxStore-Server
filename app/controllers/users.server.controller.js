@@ -1,6 +1,11 @@
 var User = require('mongoose').model('User');
 var Stuff = require('mongoose').model('Stuff');
 var request = require("request");
+
+var sellerFilter = {_id: 0,   point: 0, keeping: 0, keyword: 0, join_date: 0};
+var stationFilter = {_id: 0, stuffCount: 0};
+var stuffFilter = {negotiation: 0, receipt: 0};
+
 exports.create = function(req, res, next) {
     var user = new User(req.body);
     user.save(function(err) {
@@ -150,12 +155,30 @@ exports.read = function(req,res){
     });
 };
 
+//post'/users/keeping/:uid/:stuffId'
 exports.keepStuff = function(req, res){
-
+  User.update({uid:req.params.uid},
+    {
+      $addToSet:{
+        keeping:req.params.stuffId
+      }
+    }, function(err, result){
+      if(err){
+        res.status(500).json({
+            "result": "ERR",
+            "message": err
+        });
+      }
+      res.json({
+          "result": "SUCCESS",
+          "message": "saved stuff"
+      });
+    });
 };
 
+//get'/users/keeping/:uid'
 exports.getKeepingStuffs = function(req, res){
-  User.findOne(uid:req.params.uid)
+  User.findOne({uid:req.params.uid})
     .exec(function(err,user){
       if(err){
         res.status(500).json({
@@ -174,6 +197,9 @@ exports.getKeepingStuffs = function(req, res){
       }
       stuffsId.forEach(function(item){
           Stuff.findById(item)
+            .select(stuffFilter)
+            .populate('sellerId', sellerFilter)
+            .populate('stationId', stationFilter)
             .exec(function(err, stuff){
               if(err){
                 res.status(500).json({
