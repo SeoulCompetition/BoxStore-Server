@@ -78,8 +78,10 @@ exports.create = function(req, res, next) {
 
 exports.list = function(req, res) {
     console.log(req.params.category);
+	var category = req.params.category;
+	category =category.replace(/\./g,"/");
     Stuff.find({
-      category : req.params.category
+      category : category
     })
     .populate('sellerId', hide_id)
     .populate('stationId', stationFilter)
@@ -350,4 +352,22 @@ exports.latelyInfoAll = function(req, res){
         });
       }
     });
+};
+exports.searchByWord = function(req,res){
+	var word = req.params.word;
+	Stuff.find({
+		"stuffName" : {$regex : ".*"+word+".*"}
+	},function(err,result){
+		if(err){
+			res.status(500).json({
+				"result": "ERR",
+				"message": err
+			});
+		}else{
+			res.json({
+			  "result":"SUCCESS",
+			  "stuffs": result
+			});
+		}
+	});
 };

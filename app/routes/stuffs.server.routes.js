@@ -27,4 +27,7 @@ module.exports = function(app) {
 
     app.route('/stuffs/lately/:stationName')
         .get(stuffs.latelyInfo);
+	
+	app.route('/stuffs/search/:word')
+		.get(stuffs.searchByWord);
 };
