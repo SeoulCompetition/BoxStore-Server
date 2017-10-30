@@ -361,3 +361,14 @@ exports.latelyInfoAll = function(req, res){
       }
     });
 };
+
+exports.addpoint = function(req,res){
+  Seller.findOne({uid:req.params.uid})
+    .exec(function(err,user){
+      user.point = user.point + parseInt(req.params.point);
+      user.save(function(err){
+        if(err) console.log(err);
+        res.json(user);
+      })
+    });
+};

@@ -113,25 +113,6 @@ exports.addCount = function(stationId) {
         }
     });
   };
-  exports.setCount = function(_stationName, count) {
-    Station.findOne({
-            stationName: _stationName
-      })
-      .exec(function(err, station) {
-          if (err) {
-              return err;
-          } else {
-              station.stuffCount = count;
-              station.save(function(err2) {
-                  if (err2) {
-                      return err2;
-                  } else {
-                      return false;
-                  }
-              })
-          }
-      });
-    };
 
 //get '/station/popular'
 exports.stationRanking = function(req, res) {
