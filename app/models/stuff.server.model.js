@@ -81,8 +81,8 @@ var StuffSchema = new Schema({
         },
         done: {
           type: String,
-          //'None','Request', 'Done'
-          defalut: 'None'
+          // 'None', 'Request', 'Done'
+          default: 'None'
         }
     }
     // location 형식에 맞게 추가

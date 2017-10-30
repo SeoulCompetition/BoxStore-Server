@@ -80,7 +80,7 @@ exports.keywords_create = function(req,res){
 				$addToSet: {keywords : keyword}
 			},function(err,res){
 				if(err){
-					
+
 				}else if(res){
 					var options = {
 					  uri: 'http://52.78.22.122:3000/keywords',
@@ -102,7 +102,7 @@ exports.keywords_create = function(req,res){
 						 }else {
 							 thisRes.json(body);
 						 }
-					 });	
+					 });
 				}
 			});
 		}else {

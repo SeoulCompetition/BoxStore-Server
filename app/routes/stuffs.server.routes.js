@@ -15,7 +15,7 @@ module.exports = function(app) {
         .get(stuffs.getNegotiation)
         .put(stuffs.requestNegotiation);
 
-    app.route('/stuffs/negotiation/confirm/:stuffId')
+    app.route('/stuffs/negotiation/confirm/:stuffId/:buyerId')
         .put(stuffs.confirmNegotiation);
 
     app.route('/stuffs/receipt/:stuffId')
