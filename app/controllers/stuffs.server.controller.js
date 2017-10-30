@@ -381,14 +381,3 @@ exports.latelyInfoAll = function(req, res){
       }
     });
 };
-
-exports.putProductState = function(req,res){
-  Stuff.findById(req.params.stuffId)
-      .exec(function(err, stuff){
-        stuff.productState = req.body.productState;
-        stuff.save(function(err){
-          if(err) res.json(err);
-          else res.json("SUCCESS");
-        });
-      });
-};
