@@ -79,7 +79,7 @@ exports.keywords_create = function(req,res){
 				$addToSet: {keywords : keyword}
 			},function(err,res){
 				if(err){
-					
+
 				}else if(res){
 					var options = {
 					  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
@@ -101,7 +101,7 @@ exports.keywords_create = function(req,res){
 						 }else {
 							 thisRes.json(body);
 						 }
-					 });	
+					 });
 				}
 			});
 		}else {
