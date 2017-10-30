@@ -22,4 +22,9 @@ module.exports = function(app) {
     app.route('/users/point/:uid')
         .get(users.getPoint)
         .put(users.addpoint);
+
+	app.route('/users/:uid/reviews')
+		.post(users.write_reviews)
+		.get(users.reviews_list);
+
 };
