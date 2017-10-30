@@ -233,7 +233,7 @@ exports.confirmNegotiation = function(req, res){
             "message" : err
         });
       }
-      User.findById(req.params.buyerId)
+      Seller.findOne({uid : req.params.buyerId})
         .exec(function(err, user){
           var result = true;
           if(stuff.price > user.point) result = false;
@@ -241,7 +241,7 @@ exports.confirmNegotiation = function(req, res){
             stuffId: stuff._id,
             sellerId: stuff.sellerId,
             buyerId: user._id,
-            point: stuff.price
+            point: stuff.negotiation.price
           };
           if(result){
             trades.create(deal);
@@ -336,6 +336,7 @@ exports.confirmReceipt = function(req, res){
         });
       }else{
         trades.success(stuff._id);
+        stuff.price = stuff.negotiation.price;
         stuff.receipt.done = 'Done';
         stuff.transactionStatus = 'Sold';
         stuff.save(function(err){

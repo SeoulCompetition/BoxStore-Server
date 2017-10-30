@@ -8,6 +8,7 @@ exports.create = function(deal){
   });
   User.findById(deal.buyerId)
     .exec(function(err, user){
+        console.log(user);
         user.point = user.point - deal.point;
         user.save(function(err){
           if(err) console.log(err);
