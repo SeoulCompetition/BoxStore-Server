@@ -67,7 +67,6 @@ exports.keywords_create = function(req,res){
 	User.findOne({
 		uid : id
 	}).lean().exec(function(err,result){
-		console.log(result);
 		if(err){
 			res.status(500).json({
 				"result":"ERR",
@@ -83,7 +82,7 @@ exports.keywords_create = function(req,res){
 
 				}else if(res){
 					var options = {
-					  uri: 'http://52.78.22.122:3000/keywords',
+					  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
 					  method: 'POST',
 					  json: {
 						  "uid" : id,
@@ -91,9 +90,9 @@ exports.keywords_create = function(req,res){
 						  "userToken" : token
 					  }
 					};
-					console.log(options);
+
 					 request(options, function(err,result, body) {
-						 console.log("BODY : ",body);
+						 console.log(body);
 						 if(err){
 							 thisRes.status(500).json({
 								 "result" : "err",
@@ -142,10 +141,6 @@ exports.keywords_list = function(req,res){
     });
 };
 
-exports.read = function(req,res){
-  User.find()
-    .exec(function(err, user){
-      if(err) res.json(err);
-      res.json(user);
-    });
+exports.keepStuff = function(req, res){
+  
 };

@@ -35,6 +35,9 @@ var UserSchema = new Schema({
 	keywords : {
 		type : Array
 	},
+  keeping : {
+    type : Array
+  },
   point : {
     type : Number,
     default: 300000

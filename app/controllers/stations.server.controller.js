@@ -67,8 +67,13 @@ exports.deleteAll = function(req, res) {
 
 //get '/station/:stationName'
 exports.getStation = function(req, res) {
+    var reqStationName = req.params.stationName;
+    reqStationName = reqStationName.trim();
+    if(reqStationName[reqStationName.length-1] != "역"){
+      reqStationName = reqStationName + "역";
+    }
     Station.find({
-            stationName: req.params.stationName
+            stationName: reqStationName
         })
         .select({
           _id: 0

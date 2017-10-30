@@ -1,10 +1,9 @@
 var Stuff = require('mongoose').model('Stuff');
 var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
+var stations = require('../../app/controllers/stations.server.controller');
 var fcmPush = require('../apis/fcm_push');
 var Keyword = require('mongoose').model('Keyword');
-var stations = require('./stations.server.controller');
-var trades = require('./trades.server.controller')
 
 var hide_id = {
   _id: 0
@@ -24,8 +23,8 @@ var stuffFilter = {
 exports.create = function(req, res, next) {
   var reqStationName = req.body.stationName;
   reqStationName = reqStationName.trim();
-  if(reqStationName[reqStationName.length-1] != '역'){
-    reqStationName = reqStationName + '역';
+  if(reqStationName[reqStationName.length-1] != "역"){
+    reqStationName = reqStationName + "역";
   }
   Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
@@ -85,44 +84,6 @@ exports.create = function(req, res, next) {
             });
         });
     });
-};
-
-exports.createByAdmin = function(req, res){
-  var stationNameArr = ['홍대입구','서울역','여의도','강남','건대입구','당산','시청','노원','사당','고속터미널'];
-  var errArr = [];
-  var endNum = 0;
-  var stuffArr = req.body;
-  stuffArr.forEach(function(item){
-    Station.findOne({stationName: item.stationName})
-      .exec(function(err, station){
-        if(err) res.json(err);
-        Seller.findOne({uid: item.sellerId})
-          .exec(function(err, seller){
-              if(err) errArr.push(err);
-              else{
-                var stuff = new Stuff(item);
-                stuff.sellerId = seller._id;
-                stuff.stationId = station._id;
-                stuff.save(function(err) {
-                    if(err) errArr.push(err);
-                    endNum++;
-                    if(endNum == stuffArr.length){
-                      if(errArr.length) res.json(errArr);
-                      else{
-                        for(var i=0;i<stationNameArr.length;i++){
-                            stations.setCount(stationNameArr[i], 10-i);
-                        }
-                        res.json({
-                          "result": "SUCCESS",
-                          "message": endNum+"개 등록성공"
-                        });
-                      }
-                    }
-                });
-              }
-          });
-      });
-  });
 };
 
 exports.list = function(req, res) {
@@ -202,7 +163,12 @@ exports.requestNegotiation = function(req, res){
               "message": err
           });
       } else {
-          Station.findOne({stationName : req.body.stationName})
+          var reqStationName = req.body.stationName;
+          reqStationName = reqStationName.trim();
+          if(reqStationName[reqStationName.length-1] != "역"){
+            reqStationName = reqStationName + "역";
+          }
+          Station.findOne({stationName : reqStationName})
             .exec(function(err, station){
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
@@ -226,7 +192,7 @@ exports.requestNegotiation = function(req, res){
   });
 };
 
-//put '/stuffs/negotiation/confirm/:stuffId/:buyerId'
+//put '/stuffs/negotiation/confirm/:stuffId'
 exports.confirmNegotiation = function(req, res){
   Stuff.findById(req.params.stuffId)
     .exec(function(err, stuff){
@@ -235,43 +201,22 @@ exports.confirmNegotiation = function(req, res){
             "result" : "ERR",
             "message" : err
         });
-      }
-      Seller.findOne({uid : req.params.buyerId})
-        .exec(function(err, user){
-          var result = true;
-          if(stuff.negotiation.price > user.point) result = false;
-          console.log('stuff: ' + stuff.price);
-          console.log('user: ' + user.point);
-          console.log(result);
-          var deal = {
-            stuffId: stuff._id,
-            sellerId: stuff.sellerId,
-            buyerId: user._id,
-            point: stuff.negotiation.price
-          };
-          if(result){
-            trades.create(deal);
-            stuff.negotiation.done = 'Done';
-            stuff.save(function(err){
-              if(err){
-                res.status(500).json({
-                    "result" : "ERR",
-                    "message" : err
-                });
-              }else{
-                  res.json({
-                      "result" : "SUCCESS",
-                      "message" : "Confirm Negotiation"
-                  });
-              }
+      }else{
+        stuff.negotiation.done = 'Done';
+        stuff.save(function(err){
+          if(err){
+            res.status(500).json({
+                "result" : "ERR",
+                "message" : err
             });
           }else{
-            res.json({
-              "result" : "FAILURE",
-              "message" : "Not enough point"
-            });
+              res.json({
+                  "result" : "SUCCESS",
+                  "message" : "Confirm Negotiation"
+              });
           }
         });
+      }
     });
 };
 
@@ -289,7 +234,7 @@ exports.getReceipt =function(req, res){
         if(stuff.receipt.done == "None"){
           res.json({
             "result": "None",
-            "message": "Receipt does not exist."
+            "message": "Negotiation does not exist."
           });
         }else{
           res.json(stuff.receipt);
@@ -308,7 +253,12 @@ exports.requestReceipt = function(req, res){
           "message" : err
         });
       }else{
-        Station.findOne({stationName : req.body.stationName})
+        var reqStationName = req.body.stationName;
+        reqStationName = reqStationName.trim();
+        if(reqStationName[reqStationName.length-1] != "역"){
+          reqStationName = reqStationName + "역";
+        }
+        Station.findOne({stationName : reqStationName})
           .exec(function(err, station){
             stuff.receipt = req.body;
             stuff.receipt.stationId = station._id;
@@ -341,8 +291,6 @@ exports.confirmReceipt = function(req, res){
             "message" : err
         });
       }else{
-        trades.success(stuff._id);
-        stuff.price = stuff.negotiation.price;
         stuff.receipt.done = 'Done';
         stuff.transactionStatus = 'Sold';
         stuff.save(function(err){
@@ -364,7 +312,12 @@ exports.confirmReceipt = function(req, res){
 
 //get '/stuffs/lately/:stationName'
 exports.latelyInfo = function(req, res){
-  Station.findOne({stationName : req.params.stationName})
+  var reqStationName = req.params.stationName;
+  reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != "역"){
+    reqStationName = reqStationName + "역";
+  }
+  Station.findOne({stationName : reqStationName})
     .exec(function(err, station){
       Stuff.find({ stationId : station._id})
         .sort({createdDate : -1})
@@ -406,16 +359,5 @@ exports.latelyInfoAll = function(req, res){
           "stuffs":stuffs
         });
       }
-    });
-};
-
-exports.addpoint = function(req,res){
-  Seller.findOne({uid:req.params.uid})
-    .exec(function(err,user){
-      user.point = user.point + parseInt(req.params.point);
-      user.save(function(err){
-        if(err) console.log(err);
-        res.json(user);
-      })
     });
 };
