@@ -27,7 +27,4 @@ module.exports = function(app) {
 
     app.route('/stuffs/lately/:stationName')
         .get(stuffs.latelyInfo);
-
-    app.route('/addpoint/:uid/:point')
-        .put(stuffs.addpoint);
 };

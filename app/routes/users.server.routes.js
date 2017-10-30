@@ -14,8 +14,12 @@ module.exports = function(app) {
     app.route('/users/keeping/:uid/:stuffId')
         .post(users.keepStuff);
 
-	app.route('/users/keywords')
-		.post(users.keywords_create);
-	app.route('/users/:uid/keywords')
-		.get(users.keywords_list);
+  	app.route('/users/keywords')
+  		.post(users.keywords_create);
+  	app.route('/users/:uid/keywords')
+  		.get(users.keywords_list);
+
+    app.route('/users/point/:uid')
+        .get(users.getPoint)
+        .put(users.addpoint);
 };

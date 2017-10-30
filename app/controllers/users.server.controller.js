@@ -215,3 +215,31 @@ exports.getKeepingStuffs = function(req, res){
       });
     });
 };
+
+//put '/users/point/:uid'
+exports.addpoint = function(req,res){
+  User.findOne({uid:req.params.uid})
+    .exec(function(err,user){
+      if(err) res.json(err);
+      user.point = user.point +50000;
+      user.save(function(err){
+        if(err) res.json(err);
+        res.json({
+            "result": "SUCCESS",
+            "point": user.point
+        });
+      })
+    });
+};
+
+//get '/users/point/:uid'
+exports.getPoint = function(req, res){
+  User.findOne({uid:req.params.uid})
+    .exec(function(err,user){
+      if(err) res.json(err);
+      res.json({
+          "result": "SUCCESS",
+          "point": user.point
+      });
+    });
+};
