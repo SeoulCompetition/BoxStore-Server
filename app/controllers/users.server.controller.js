@@ -1,4 +1,5 @@
 var User = require('mongoose').model('User');
+var Stuff = require('mongoose').model('Stuff');
 var request = require("request");
 exports.create = function(req, res, next) {
     var user = new User(req.body);
@@ -149,6 +150,42 @@ exports.read = function(req,res){
     });
 };
 
-// exports.keepStuff = function(req, res){
-//
-// };
+exports.keepStuff = function(req, res){
+
+};
+
+exports.getKeepingStuffs = function(req, res){
+  User.findOne(uid:req.params.uid)
+    .exec(function(err,user){
+      if(err){
+        res.status(500).json({
+            "result": "ERR",
+            "message": err
+        });
+      }
+      var stuffsId = user.keeping;
+      var stuffsArr = [];
+      var arrLength = stuffsId.length;
+      if(!arrLength){
+        res.json({
+            "result": "Empty",
+            "message": "keeping array has no stuff"
+        });
+      }
+      stuffsId.forEach(function(item){
+          Stuff.findById(item)
+            .exec(function(err, stuff){
+              if(err){
+                res.status(500).json({
+                    "result": "ERR",
+                    "message": err
+                });
+              }
+              stuffsArr.push(stuff);
+              arrLength--;
+              if(!arrLength)
+                res.json(stuffsArr);
+            });
+      });
+    });
+};
