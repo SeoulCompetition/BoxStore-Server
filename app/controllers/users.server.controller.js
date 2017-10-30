@@ -140,3 +140,11 @@ exports.keywords_list = function(req,res){
         }
     });
 };
+
+exports.read = function(req,res){
+  User.find()
+    .exec(function(err, user){
+      if(err) res.json(err);
+      res.json(user);
+    });
+};
