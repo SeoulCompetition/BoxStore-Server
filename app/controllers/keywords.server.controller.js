@@ -3,6 +3,7 @@ exports.create = function(req, res, next) {
 	var id = req.body.uid;
 	var token = req.body.userToken;
 	var keywordName = req.body.keyword;
+	console.log(keywordName);
 	Keyword.findOne({name:keywordName},function(err,result){
 		if(err){
 			console.log(err);

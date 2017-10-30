@@ -11,5 +11,6 @@ module.exports = function() {
     require('../app/models/stuff.server.model.js');
     require('../app/models/station.server.model.js');
     require('../app/models/keyword.server.model.js');
+    require('../app/models/trade.server.model.js');
    return db;
 }

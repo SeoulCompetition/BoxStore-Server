@@ -15,7 +15,7 @@ module.exports = function(app) {
         .get(stuffs.getNegotiation)
         .put(stuffs.requestNegotiation);
 
-    app.route('/stuffs/negotiation/confirm/:stuffId')
+    app.route('/stuffs/negotiation/confirm/:stuffId/:buyerId')
         .put(stuffs.confirmNegotiation);
 
     app.route('/stuffs/receipt/:stuffId')
@@ -27,5 +27,7 @@ module.exports = function(app) {
 
     app.route('/stuffs/lately/:stationName')
         .get(stuffs.latelyInfo);
-    
+
+    app.route('/addpoint/:uid/:point')
+        .put(stuffs.addpoint);
 };

@@ -37,6 +37,10 @@ var UserSchema = new Schema({
 	},
   keeping : {
     type : Array
+  },
+  point : {
+    type : Number,
+    default: 300000
   }
 }, {versionKey: false});
 

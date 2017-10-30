@@ -3,10 +3,12 @@ var users = require('../../app/controllers/users.server.controller');
 
 module.exports = function(app) {
     app.route('/users')
-        .post(users.create);
+        .post(users.create)
+        .get(users.read);
 
     app.route('/users/:uid')
         .get(users.login);
+
     app.route('/users/keeping/:stuffId')
         .post(users.keepStuff);
 
