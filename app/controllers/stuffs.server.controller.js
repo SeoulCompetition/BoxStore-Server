@@ -24,6 +24,9 @@ var stuffFilter = {
 exports.create = function(req, res, next) {
   var reqStationName = req.body.stationName;
   reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != '역'){
+    reqStationName = reqStationName + '역';
+  }
   Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
       if(err) res.json(err);
@@ -403,5 +406,16 @@ exports.latelyInfoAll = function(req, res){
           "stuffs":stuffs
         });
       }
+    });
+};
+
+exports.addpoint = function(req,res){
+  Seller.findOne({uid:req.params.uid})
+    .exec(function(err,user){
+      user.point = user.point + parseInt(req.params.point);
+      user.save(function(err){
+        if(err) console.log(err);
+        res.json(user);
+      })
     });
 };
