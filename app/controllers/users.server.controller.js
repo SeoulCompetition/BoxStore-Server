@@ -83,7 +83,7 @@ exports.keywords_create = function(req,res){
 			});
 		}else if(res.n>0){
 			var options = {
-			  uri: 'http://rlatjdwn9410.run.goorm.io/keywords',
+			  uri: 'http://52.78.22.122:3000/keywords',
 			  method: 'POST',
 			  json: {
 				  "uid" : id,
