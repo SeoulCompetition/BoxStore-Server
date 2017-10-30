@@ -264,7 +264,7 @@ exports.getReceipt =function(req, res){
         if(stuff.receipt.done == "None"){
           res.json({
             "result": "None",
-            "message": "Negotiation does not exist."
+            "message": "Receipt does not exist."
           });
         }else{
           res.json(stuff.receipt);
