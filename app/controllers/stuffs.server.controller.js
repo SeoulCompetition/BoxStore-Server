@@ -24,6 +24,9 @@ var stuffFilter = {
 exports.create = function(req, res, next) {
   var reqStationName = req.body.stationName;
   reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != '역'){
+    reqStationName = reqStationName + '역';
+  }
   Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
       if(err) res.json(err);
