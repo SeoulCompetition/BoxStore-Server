@@ -19,6 +19,12 @@ exports.create = function(req, res, next) {
   Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
       if(err) res.json(err);
+      if(station == null){
+        res.status(205).json({
+            "result" : "NULL",
+            "message" : "Does not exist"
+        });
+      }
       Seller.findOne({uid: req.body.sellerId})
         .exec(function(err, seller){
             if(err) {

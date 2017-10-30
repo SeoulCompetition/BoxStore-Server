@@ -35,7 +35,7 @@ var UserSchema = new Schema({
 	keywords : {
 		type : Array
 	},
-  keeping : {
+  keeping : { //담아두기
     type : Array
   },
   point : {
