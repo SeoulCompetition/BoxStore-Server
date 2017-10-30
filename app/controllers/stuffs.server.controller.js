@@ -226,41 +226,46 @@ exports.requestNegotiation = function(req, res){
 //put '/stuffs/negotiation/confirm/:stuffId/:buyerId'
 exports.confirmNegotiation = function(req, res){
   Stuff.findById(req.params.stuffId)
-    .exec(async function(err, stuff){
+    .exec(function(err, stuff){
       if(err){
         res.status(500).json({
             "result" : "ERR",
             "message" : err
         });
       }
-      var deal = {
-        stuffId: stuff._id,
-        sellerId: stuff.sellerId,
-        buyerId: req.params.buyerId,
-        point: stuff.price
-      };
-      var result = await trades.create(deal);
-      if(result){
-        stuff.negotiation.done = 'Done';
-        stuff.save(function(err){
-          if(err){
-            res.status(500).json({
-                "result" : "ERR",
-                "message" : err
+      User.findById(req.params.buyerId)
+        .exec(function(err, user){
+          var result = true;
+          if(stuff.price > user.point) result = false;
+          var deal = {
+            stuffId: stuff._id,
+            sellerId: stuff.sellerId,
+            buyerId: user._id,
+            point: stuff.price
+          };
+          if(result){
+            trades.create(deal);
+            stuff.negotiation.done = 'Done';
+            stuff.save(function(err){
+              if(err){
+                res.status(500).json({
+                    "result" : "ERR",
+                    "message" : err
+                });
+              }else{
+                  res.json({
+                      "result" : "SUCCESS",
+                      "message" : "Confirm Negotiation"
+                  });
+              }
             });
           }else{
-              res.json({
-                  "result" : "SUCCESS",
-                  "message" : "Confirm Negotiation"
-              });
+            res.json({
+              "result" : "FAILURE",
+              "message" : "Not enough point"
+            });
           }
         });
-      }else{
-        res.json({
-          "result" : "FAILURE",
-          "message" : "Not enough point"
-        });
-      }
     });
 };
 
@@ -330,8 +335,7 @@ exports.confirmReceipt = function(req, res){
             "message" : err
         });
       }else{
-        var result = await trades.success(stuff._id);
-        console.log(result);
+        trades.success(stuff._id);
         stuff.receipt.done = 'Done';
         stuff.transactionStatus = 'Sold';
         stuff.save(function(err){
