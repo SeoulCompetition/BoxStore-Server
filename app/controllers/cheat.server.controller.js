@@ -8,9 +8,9 @@ exports.checkCheat = function(req, res){
     .exec(function(err, user){
       if(err) res.status(500).json(err);
       if(user == null){
-        res.status(204).json({
+        res.status(404).json({
           "result" : "NULL",
-          "message": "no uid"          
+          "message": "no uid"
         });
       }
       if(user.phoneNum == null){
