@@ -23,6 +23,9 @@ var stuffFilter = {
 exports.create = function(req, res, next) {
   var reqStationName = req.body.stationName;
   reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != "역"){
+    reqStationName = reqStationName + "역";
+  }
   Station.findOne({stationName: reqStationName})
     .exec(function(err, station){
       if(err) res.json(err);
@@ -81,44 +84,6 @@ exports.create = function(req, res, next) {
             });
         });
     });
-};
-
-exports.createByAdmin = function(req, res){
-  var stationNameArr = ['홍대입구','서울역','여의도','강남','건대입구','당산','시청','노원','사당','고속터미널'];
-  var errArr = [];
-  var endNum = 0;
-  var stuffArr = req.body;
-  stuffArr.forEach(function(item){
-    Station.findOne({stationName: item.stationName})
-      .exec(function(err, station){
-        if(err) res.json(err);
-        Seller.findOne({uid: item.sellerId})
-          .exec(function(err, seller){
-              if(err) errArr.push(err);
-              else{
-                var stuff = new Stuff(item);
-                stuff.sellerId = seller._id;
-                stuff.stationId = station._id;
-                stuff.save(function(err) {
-                    if(err) errArr.push(err);
-                    endNum++;
-                    if(endNum == stuffArr.length){
-                      if(errArr.length) res.json(errArr);
-                      else{
-                        for(var i=0;i<stationNameArr.length;i++){
-                            stations.setCount(stationNameArr[i], 10-i);
-                        }
-                        res.json({
-                          "result": "SUCCESS",
-                          "message": endNum+"개 등록성공"
-                        });
-                      }
-                    }
-                });
-              }
-          });
-      });
-  });
 };
 
 exports.list = function(req, res) {
@@ -198,7 +163,12 @@ exports.requestNegotiation = function(req, res){
               "message": err
           });
       } else {
-          Station.findOne({stationName : req.body.stationName})
+          var reqStationName = req.body.stationName;
+          reqStationName = reqStationName.trim();
+          if(reqStationName[reqStationName.length-1] != "역"){
+            reqStationName = reqStationName + "역";
+          }
+          Station.findOne({stationName : reqStationName})
             .exec(function(err, station){
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
@@ -283,7 +253,12 @@ exports.requestReceipt = function(req, res){
           "message" : err
         });
       }else{
-        Station.findOne({stationName : req.body.stationName})
+        var reqStationName = req.body.stationName;
+        reqStationName = reqStationName.trim();
+        if(reqStationName[reqStationName.length-1] != "역"){
+          reqStationName = reqStationName + "역";
+        }
+        Station.findOne({stationName : reqStationName})
           .exec(function(err, station){
             stuff.receipt = req.body;
             stuff.receipt.stationId = station._id;
@@ -337,7 +312,12 @@ exports.confirmReceipt = function(req, res){
 
 //get '/stuffs/lately/:stationName'
 exports.latelyInfo = function(req, res){
-  Station.findOne({stationName : req.params.stationName})
+  var reqStationName = req.params.stationName;
+  reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != "역"){
+    reqStationName = reqStationName + "역";
+  }
+  Station.findOne({stationName : reqStationName})
     .exec(function(err, station){
       Stuff.find({ stationId : station._id})
         .sort({createdDate : -1})

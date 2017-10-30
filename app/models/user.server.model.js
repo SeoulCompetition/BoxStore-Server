@@ -34,7 +34,10 @@ var UserSchema = new Schema({
     },
 	keywords : {
 		type : Array
-	}
+	},
+  keeping : {
+    type : Array
+  }
 }, {versionKey: false});
 
 //UserSchema.set('toJSON',{ getters : true }); get함수 필요할 때
