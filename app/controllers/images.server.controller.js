@@ -4,8 +4,10 @@ var sharp = require('sharp');
 
 var IMAGE_PATH = './config/public/original/';
 var THUMBNAIL_PATH = './config/public/thumbnails/';
+var MAP_PATH = './config/public/map/'
 var IMAGE_URL = 'http://52.78.22.122:3000/original/';
 var THUMBNAIL_URL = 'http://52.78.22.122:3000/thumbnails/';
+var MAP_URL = 'http://52.78.22.122:3000/map/';
 var WIDE_SIZE = 400;
 
 exports.uploadForReceipt = function(req, res){
@@ -103,3 +105,17 @@ exports.getReceiptImage = function(req, res){
         }
       });
 };
+
+exports.getMap = function(req,res){
+  if(fs.existsSync(MAP_PATH+req.params.stationName+'.jpg')){
+    res.json({
+        "result" : "SUCCESS",
+        "mapURL" : MAP_PATH+req.params.stationName+'.jpg'
+    });
+  }else{
+    res.status(500).json({
+      "result" : "ERR",
+      "message": "Does not exist"
+    });
+  }
+}
