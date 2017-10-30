@@ -7,14 +7,14 @@ exports.create = function(deal){
     User.findById(deal.buyerId)
       .exec(function(err, user){
         var rPoint = user.point - deal.point;
-        if(rPoint > 0){
+        if(rPoint >= 0){
           user.point = rPoint;
           trade.save(function(err){
             if(err) console.log(err);
-            else resolve("created trade");
+            else resolve(true);
           });
         }else{
-          reject("not enough point");
+          reject(false);
         }
       });
   });
@@ -23,6 +23,7 @@ exports.create = function(deal){
 exports.success = async function(stuffId){
   return new Promise((resolve, reject) => {
     var result = await tradeProcess(stuffId, true);
+    result = result + ' : success';
     resolve(result);
   });
 };
@@ -30,6 +31,7 @@ exports.success = async function(stuffId){
 exports.failure = async function(stuffId){
   return new Promise((resolve, reject) => {
     var result = await tradeProcess(stuffId, false);
+    result = result + ' : failure';
     resolve(result);
   });
 };

@@ -1,9 +1,10 @@
 var Stuff = require('mongoose').model('Stuff');
 var Seller = require('mongoose').model('User');
 var Station = require('mongoose').model('Station');
-var stations = require('../../app/controllers/stations.server.controller');
 var fcmPush = require('../apis/fcm_push');
 var Keyword = require('mongoose').model('Keyword');
+var stations = require('./stations.server.controller');
+var trades = require('./trades.server.controller')
 
 var hide_id = {
   _id: 0
@@ -222,16 +223,24 @@ exports.requestNegotiation = function(req, res){
   });
 };
 
-//put '/stuffs/negotiation/confirm/:stuffId'
+//put '/stuffs/negotiation/confirm/:stuffId/:buyerId'
 exports.confirmNegotiation = function(req, res){
   Stuff.findById(req.params.stuffId)
-    .exec(function(err, stuff){
+    .exec(async function(err, stuff){
       if(err){
         res.status(500).json({
             "result" : "ERR",
             "message" : err
         });
-      }else{
+      }
+      var deal = {
+        stuffId: stuff._id,
+        sellerId: stuff.sellerId,
+        buyerId: req.params.buyerId,
+        point: stuff.price
+      };
+      var result = await trades.create(deal);
+      if(result){
         stuff.negotiation.done = 'Done';
         stuff.save(function(err){
           if(err){
@@ -245,6 +254,11 @@ exports.confirmNegotiation = function(req, res){
                   "message" : "Confirm Negotiation"
               });
           }
+        });
+      }else{
+        res.json({
+          "result" : "FAILURE",
+          "message" : "Not enough point"
         });
       }
     });
@@ -316,6 +330,8 @@ exports.confirmReceipt = function(req, res){
             "message" : err
         });
       }else{
+        var result = await trades.success(stuff._id);
+        console.log(result);
         stuff.receipt.done = 'Done';
         stuff.transactionStatus = 'Sold';
         stuff.save(function(err){
