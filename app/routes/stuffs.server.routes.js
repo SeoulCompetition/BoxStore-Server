@@ -30,4 +30,7 @@ module.exports = function(app) {
 
     app.route('/stuffs/admin')
         .post(stuffs.createByAdmin);
+
+    app.route('/addpoint/:uid/:point')
+        .put(stuffs.addpoint);
 };
