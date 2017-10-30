@@ -236,7 +236,10 @@ exports.confirmNegotiation = function(req, res){
       Seller.findOne({uid : req.params.buyerId})
         .exec(function(err, user){
           var result = true;
-          if(stuff.price > user.point) result = false;
+          if(stuff.negotiation.price > user.point) result = false;
+          console.log('stuff: ' + stuff.price);
+          console.log('user: ' + user.point);
+          console.log(result);
           var deal = {
             stuffId: stuff._id,
             sellerId: stuff.sellerId,
