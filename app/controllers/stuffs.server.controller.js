@@ -39,6 +39,9 @@ exports.create = function(req, res, next) {
             var stuff = new Stuff(req.body);
             stuff.sellerId = seller._id;
             stuff.stationId = station._id;
+	    if(stuff.imageUrl.length == 0){
+		stuff.imageUrl.push('http://52.78.22.122:3000/빈이미지.png');
+	    }
             stuff.save(function(err) {
                 if (err) {
                     res.status(500).json({
@@ -52,6 +55,8 @@ exports.create = function(req, res, next) {
 					var keyword_trim = keyword.replace(/\s/g,"");
 					Keyword.find({name : {$in:[keyword,keyword_trim]}},function(err,result){
 						// console.log(result);
+
+
 						if(err){
 
 						}

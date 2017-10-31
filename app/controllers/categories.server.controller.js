@@ -14,13 +14,6 @@ exports.list = function(req, res, next) {
     MongoClient.connect("mongodb://localhost:27017/seoul-competition", function(err, db) {
         db.collection("categories").findOne({"name" : category},
 	filter,function (err,result) {
-          if(result == null){
-            res.status(404).json({
-              "result" : "NULL",
-              "message": "Does not exist"
-            });
-            return;
-          }
           if(result.index == 2 ){
             res.json({
               "result" : "SELECTED",
