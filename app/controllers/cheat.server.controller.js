@@ -37,7 +37,10 @@ exports.checkCheat = function(req, res){
             data = data.split('/').join('');
             data = data.replace(/cbe/g,'');
             data = user.name + "씨는 "+data;
-            res.json(data);
+            res.json({
+                "result" : "SUCCESS",
+                "message" : data
+            });
           });
       });
       check.on('error', function(err){
