@@ -107,13 +107,18 @@ exports.getReceiptImage = function(req, res){
 };
 
 exports.getMap = function(req,res){
-  if(fs.existsSync(MAP_PATH+req.params.stationName+'.jpg')){
+  var reqStationName = req.params.stationName;
+  reqStationName = reqStationName.trim();
+  if(reqStationName[reqStationName.length-1] != "역"){
+    reqStationName = reqStationName + "역";
+  }
+  if(fs.existsSync(MAP_PATH+reqStationName+'.jpg')){
     res.json({
         "result" : "SUCCESS",
-        "mapURL" : MAP_URL+req.params.stationName+'.jpg'
+        "mapURL" : MAP_URL+reqStationName+'.jpg'
     });
   }else{
-    res.status(500).json({
+    res.status(404).json({
       "result" : "ERR",
       "message": "Does not exist"
     });
