@@ -6,18 +6,23 @@ exports.checkCheat = function(req, res){
 
   User.findOne({uid:req.params.uid})
     .exec(function(err, user){
-      if(err) res.status(500).json(err);
+      if(err) {
+        res.status(500).json(err);
+        return;
+      }
       if(user == null){
         res.status(404).json({
           "result" : "NULL",
           "message": "no uid"
         });
+        return;
       }
       if(user.phoneNum == null){
         res.status(204).json({
           "result" : "NULL",
           "message": "no phone number"
         });
+        return;
       }
       var keyword = user.phoneNum;
       var options = {

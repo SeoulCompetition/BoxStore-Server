@@ -38,6 +38,7 @@ exports.list = function(req, res) {
                     "result": "ERR",
                     "message": err
                 });
+                return;
             } else {
                 res.json({
                     "result": "SUCCESS",
@@ -56,6 +57,7 @@ exports.deleteAll = function(req, res) {
                 "result": "ERR",
                 "message": err
             });
+            return;
         } else {
             res.json({
                 "result": "SUCCESS",
@@ -84,6 +86,7 @@ exports.getStation = function(req, res) {
                     "result": "ERR",
                     "message": err
                 });
+                return;
             } else {
                 res.json({
                     "result": "SUCCESS",
@@ -128,6 +131,7 @@ exports.stationRanking = function(req, res) {
                     "result": "ERR",
                     "message": err
                 });
+                return;
             } else {
                 res.json({
                     "result": "SUCCESS",

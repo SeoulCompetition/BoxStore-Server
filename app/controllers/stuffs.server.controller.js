@@ -25,6 +25,7 @@ exports.create = function(req, res, next) {
             "result" : "NULL",
             "message" : "Does not exist"
         });
+        return;
       }
       Seller.findOne({uid: req.body.sellerId})
         .exec(function(err, seller){
@@ -33,6 +34,7 @@ exports.create = function(req, res, next) {
                 "result" : "ERR",
                 "message": err
               });
+              return;
             }
             var stuff = new Stuff(req.body);
             stuff.sellerId = seller._id;
@@ -43,6 +45,7 @@ exports.create = function(req, res, next) {
                         "result": "ERR",
                         "message": err
                     });
+                    return;
                 } else {
                     stations.addCount(station._id);
 					var keyword = stuff.stuffName;
@@ -98,6 +101,7 @@ exports.list = function(req, res) {
                 "result": "ERR",
                 "message": err
             });
+            return;
         } else {
             res.json({
               "result" : "SUCCESS",
@@ -120,6 +124,7 @@ exports.info = function(req, res) {
                 "result": "ERR",
                 "message": err
             });
+            return;
         } else {
             res.json({
               "result": "SUCCESS",
@@ -139,6 +144,7 @@ exports.getNegotiation = function(req, res){
             "result": "ERR",
             "message": err
         });
+        return;
       }else{
         if(stuff.negotiation.done == "None"){
           res.json({
@@ -161,6 +167,7 @@ exports.requestNegotiation = function(req, res){
               "result": "ERR",
               "message": err
           });
+          return;
       } else {
           var reqStationName = req.body.stationName;
           reqStationName = reqStationName.trim();
@@ -175,6 +182,7 @@ exports.requestNegotiation = function(req, res){
                       "result" : "NULL",
                       "message" : "Does not exist"
                   });
+                  return;
                 }
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
@@ -186,6 +194,7 @@ exports.requestNegotiation = function(req, res){
                         "result": "ERR",
                         "message": err
                     });
+                    return;
                   }else{
                     res.json({
                       "result":"SUCCESS",
@@ -207,6 +216,7 @@ exports.confirmNegotiation = function(req, res){
             "result" : "ERR",
             "message" : err
         });
+        return;
       }
       Seller.findOne({uid : req.params.buyerId})
         .exec(function(err, user){
@@ -227,6 +237,7 @@ exports.confirmNegotiation = function(req, res){
                     "result" : "ERR",
                     "message" : err
                 });
+                return;
               }else{
                   res.json({
                       "result" : "SUCCESS",
@@ -254,6 +265,7 @@ exports.getReceipt =function(req, res){
             "result" : "ERR",
             "message" : err
         });
+        return;
       }else{
         if(stuff.receipt.done == "None"){
           res.json({
@@ -276,6 +288,7 @@ exports.requestReceipt = function(req, res){
           "result" : "ERR",
           "message" : err
         });
+        return;
       }else{
         var reqStationName = req.body.stationName;
         reqStationName = reqStationName.trim();
@@ -290,6 +303,7 @@ exports.requestReceipt = function(req, res){
                   "result" : "NULL",
                   "message" : "Does not exist"
               });
+              return;
             }
             stuff.receipt = req.body;
             stuff.receipt.stationId = station._id;
@@ -300,6 +314,7 @@ exports.requestReceipt = function(req, res){
                   "result" : "ERR",
                   "message" : err
                 });
+                return;
               }else{
                 res.json({
                   "result" : "SUCCESS",
@@ -321,6 +336,7 @@ exports.confirmReceipt = function(req, res){
             "result" : "ERR",
             "message" : err
         });
+        return;
       }else{
         trades.success(stuff._id);
         stuff.price = stuff.negotiation.price;
@@ -332,6 +348,7 @@ exports.confirmReceipt = function(req, res){
                 "result" : "ERR",
                 "message" : err
             });
+            return;
           }else{
               res.json({
                   "result" : "SUCCESS",
@@ -363,6 +380,7 @@ exports.latelyInfo = function(req, res){
                 "result": "ERR",
                 "message": err
             });
+            return;
           }else{
             res.json({
               "result":"SUCCESS",
@@ -386,6 +404,7 @@ exports.latelyInfoAll = function(req, res){
             "result": "ERR",
             "message": err
         });
+        return;
       }else{
         res.json({
           "result":"SUCCESS",
@@ -404,6 +423,7 @@ exports.searchByWord = function(req,res){
 				"result": "ERR",
 				"message": err
 			});
+      return;
 		}else{
 			res.json({
 			  "result":"SUCCESS",

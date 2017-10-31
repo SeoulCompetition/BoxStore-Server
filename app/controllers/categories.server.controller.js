@@ -19,6 +19,7 @@ exports.list = function(req, res, next) {
               "result" : "NULL",
               "message": "Does not exist"
             });
+            return;
           }
           if(result.index == 2 ){
             res.json({

@@ -27,6 +27,7 @@ exports.uploadForReceipt = function(req, res){
                   "result" : "ERR",
                   "message": err
                 });
+                return;
               }else{
                 res.json({
                   "result" : "SUCCESS",
@@ -64,6 +65,7 @@ exports.uploadForStuff = function(req, res){
                       "result" : "ERR",
                       "message": err
                     });
+                    return;
                   }else{
                     res.json({
                       "result" : "SUCCESS",
@@ -86,6 +88,7 @@ exports.getStuffImages = function(req ,res){
             "result" : "ERR",
             "message": err
           });
+          return;
         }else{
           res.json(stuff.imageUrl);
         }
@@ -100,6 +103,7 @@ exports.getReceiptImage = function(req, res){
             "result" : "ERR",
             "message": err
           });
+          return;
         }else{
           res.json(stuff.receipt.imageUrl);
         }
@@ -122,5 +126,6 @@ exports.getMap = function(req,res){
       "result" : "ERR",
       "message": "Does not exist"
     });
+    return;
   }
 }

@@ -15,11 +15,13 @@ exports.create = function(req, res, next) {
                     "result": "ERR",
                     "message": "id 중복"
                 });
+                return;
             } else {
                 res.status(500).json({
                     "result": "ERR",
                     "message": "db 에러"
                 });
+                return;
             }
         } else {
             res.json({
@@ -49,6 +51,7 @@ exports.login = function(req, res) {
         	        "result": "ERR",
                 	"message": "db 에러"
 	            });
+              return;
         } else {
             if (result) {
                 res.json({
@@ -58,9 +61,10 @@ exports.login = function(req, res) {
                 });
             } else {
                 res.status(404).json({
-			"result": "ERR",
-			"message": "로그인 실패"
-		});
+            			"result": "ERR",
+            			"message": "로그인 실패"
+            		});
+                return;
             }
         }
     });
@@ -81,6 +85,7 @@ exports.keywords_create = function(req,res){
 				"result": "ERR",
 				"message": "db 에러"
 			});
+      return;
 		}else if(res.n>0){
 			var options = {
 			  uri: 'http://52.78.22.122:3000/keywords',
@@ -99,15 +104,17 @@ exports.keywords_create = function(req,res){
 						 "result" : "err",
 						 "message" : "server error"
 					 });
+           return;
 				 }else {
 					 thisRes.json(body);
 				 }
-			 });	
+			 });
 		}else{
 			thisRes.status(404).json({
 				"result":"ERR",
 				"message":"잘못된 유저아이디"
 			});
+      return;
 		}
 	});
 };
@@ -123,6 +130,7 @@ exports.keywords_list = function(req,res){
         	        "result": "ERR",
                 	"message": "db 에러"
 	            });
+              return;
         } else {
             if (result) {
                 res.json({
@@ -132,9 +140,10 @@ exports.keywords_list = function(req,res){
                 });
             } else {
                 res.status(404).json({
-			"result": "ERR",
-			"message": "로그인 실패"
-		});
+            			"result": "ERR",
+            			"message": "로그인 실패"
+            		});
+                return;
             }
         }
     });
@@ -161,6 +170,7 @@ exports.keepStuff = function(req, res){
             "result": "ERR",
             "message": err
         });
+        return;
       }
       res.json({
           "result": "SUCCESS",
@@ -178,6 +188,7 @@ exports.getKeepingStuffs = function(req, res){
             "result": "ERR",
             "message": err
         });
+        return;
       }
       var stuffsId = user.keeping;
       var stuffsArr = [];
@@ -199,6 +210,7 @@ exports.getKeepingStuffs = function(req, res){
                     "result": "ERR",
                     "message": err
                 });
+                return;
               }
               stuffsArr.push(stuff);
               arrLength--;
@@ -243,7 +255,7 @@ exports.write_reviews = function(req, res){
 	var reviewerId = req.body.reviewerId;
 	var reviewContents = req.body.contents;
 	var starPoint = req.body.starPoint;
-	
+
 	async.waterfall([
 		function(callback){
 			User.findOne({
@@ -273,7 +285,7 @@ exports.write_reviews = function(req, res){
 			},function(err,result){
 				if(err){
 					callback("DB");
-					
+
 				}else if(result.n>0){
 					callback(null);
 				}else{
@@ -288,16 +300,19 @@ exports.write_reviews = function(req, res){
 						"result": "ERR",
 						"message": "db 에러"
 					});
+          return;
 			}else if ( err === 'ID'){
 				res.status(404).json({
 					"result":"ERR",
 					"message":"잘못된 유저아이디"
 				});
+        return;
 			}else{
 				res.status(500).json({
 					"result": "ERR",
 					"message": "server 에러"
 				});
+        return;
 			}
 		}else{
 			res.json({
@@ -306,7 +321,7 @@ exports.write_reviews = function(req, res){
 			});
 		}
 	});
-	
+
 };
 exports.reviews_list = function(req,res){
 	var id = req.params.uid;
@@ -318,6 +333,7 @@ exports.reviews_list = function(req,res){
 				"result": "ERR",
 				"message": "db 에러"
 			});
+      return;
 		}else if(result){
 			res.json({
 				"result" : "SUCCESS",
@@ -328,8 +344,7 @@ exports.reviews_list = function(req,res){
 				"result":"ERR",
 				"message":"잘못된 유저아이디"
 			});
+      return;
 		}
 	});
 };
-
-	
