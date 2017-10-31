@@ -369,6 +369,13 @@ exports.latelyInfo = function(req, res){
   }
   Station.findOne({stationName : reqStationName})
     .exec(function(err, station){
+      if(station==null){
+        res.status(404).json({
+            "result": "ERR",
+            "message": "Does not exist"
+        });
+        return;
+      }
       Stuff.find({ stationId : station._id})
         .sort({createdDate : -1})
         .select(stuffFilter)
