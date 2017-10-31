@@ -432,6 +432,13 @@ exports.searchByWord = function(req,res){
 			});
       return;
 		}else{
+      if(result==null){
+        res.status(404).json({
+          "result":"NULL",
+          "message":"Does not exist"
+        });
+        return;
+      }
 			res.json({
 			  "result":"SUCCESS",
 			  "stuffs": result
