@@ -12,6 +12,12 @@ var WIDE_SIZE = 400;
 
 exports.uploadForReceipt = function(req, res){
   var imageName = req.file.originalname;
+  if(fs.existsSync(THUMBNAIL_PATH + imageName.split('.')[0] + '.png')){
+	res.status(201).json({
+		"result": "SUCCESS",
+		"message": "already exists"
+	});
+  }
   Stuff.findById(req.params.stuffId)
       .exec(function(err, stuff){
         sharp(IMAGE_PATH + imageName)
@@ -47,6 +53,8 @@ exports.uploadForStuff = function(req, res){
   var arrSize = imageArr.length;
   imageArr.forEach(function(item){
     var imageName = item.originalname;
+    if(fs.existsSync(THUMBNAIL_PATH+imageName.split('.')[0]+'.png'))
+	return;
     sharp(IMAGE_PATH + imageName)
     .resize(WIDE_SIZE)
     .png()
