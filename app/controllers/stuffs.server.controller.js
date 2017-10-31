@@ -169,6 +169,13 @@ exports.requestNegotiation = function(req, res){
           }
           Station.findOne({stationName : reqStationName})
             .exec(function(err, station){
+                if(err) res.json(err);
+                if(station == null){
+                  res.status(205).json({
+                      "result" : "NULL",
+                      "message" : "Does not exist"
+                  });
+                }
                 stuff.negotiation.stationId = station._id;
                 stuff.negotiation.price = req.body.price;
                 stuff.negotiation.done = 'Request';
@@ -277,6 +284,13 @@ exports.requestReceipt = function(req, res){
         }
         Station.findOne({stationName : reqStationName})
           .exec(function(err, station){
+            if(err) res.json(err);
+            if(station == null){
+              res.status(205).json({
+                  "result" : "NULL",
+                  "message" : "Does not exist"
+              });
+            }
             stuff.receipt = req.body;
             stuff.receipt.stationId = station._id;
             stuff.receipt.done = 'Request';
